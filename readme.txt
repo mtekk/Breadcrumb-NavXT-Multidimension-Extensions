@@ -37,6 +37,7 @@ Please visit [Breadcrumb NavXT's Documentation](http://mtekk.us/code/breadcrumb-
 * Behavior Change: Refactored entire plugin
 * Bug fix: Fixed issues relating to support for Breadcrumb NavXT 5.1.x
 = 1.7.0 =
+* Behavior Change: Dropped support of version of Breadcrumb NavXT prior to 5.0.x
 * Bug fix: Fixed issues relating to support for Breadcrumb NavXT 5.0.x
 = 1.6.0 =
 * Bug fix: Fixed issues relating to support for Breadcrumb NavXT 4.2.x
