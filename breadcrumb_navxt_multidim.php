@@ -40,7 +40,7 @@ if(version_compare(phpversion(), '5.2.0', '<'))
 	return;
 }
 //Have to bootstrap our init so that we don't rely on the order of activation
-add_action('plugins_loaded', 'bcn_multidim_ext_init', 10);
+add_action('plugins_loaded', 'bcn_multidim_ext_init', 20);
 function bcn_multidim_ext_init()
 {
 	//If Breadcrumb NavXT isn't active yet, warn the user
