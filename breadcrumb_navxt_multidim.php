@@ -58,34 +58,44 @@ function bcn_multidim_ext_init()
 		}
 		return;
 	}
-	else if(!defined('breadcrumb_navxt::version') || version_compare(breadcrumb_navxt::version, '5.1.0', '<'))
+	//If the installed Breadcrumb NavXT is pre 5.1-RC1 (aka 5.0.90) we may need to load legacy code
+	else if(!defined('breadcrumb_navxt::version') || version_compare(breadcrumb_navxt::version, '5.0.90', '<'))
 	{
-		//Only purpose of this function is to echo out the Breadcrumb NavXT version error
-		function bcn_multidim_ext_old()
+		global $breadcrumb_navxt;
+		//If the user's Breadcrumb NavXT version is more than 1 version back alert the user
+		if(version_compare($breadcrumb_navxt->get_version(), '5.0.0', '<'))
 		{
-			if(defined('breadcrumb_navxt::version'))
-			{
-				$version = breadcrumb_navxt::version;
-			}
-			else if(class_exists('breadcrumb_navxt'))
-			{
-				global $breadcrumb_navxt;
-				$version = $breadcrumb_navxt->get_version();
-			}
-			else
+			//Only purpose of this function is to echo out the Breadcrumb NavXT version error
+			function bcn_multidim_ext_old()
 			{
 				$version = __('unknown', 'breacrumb-navxt');
+				//While not usefull today, in the future this will be hit
+				if(defined('breadcrumb_navxt::version'))
+				{
+					$version = breadcrumb_navxt::version;
+				}
+				//Most will see this one
+				else if(class_exists('breadcrumb_navxt'))
+				{
+					global $breadcrumb_navxt;
+					$version = $breadcrumb_navxt->get_version();
+				}
+				printf('<div class="error"><p>' . __('Your Breadcrumb NavXT version is too old, please upgrade to a newer version. Your version is %1$s, Breadcrumb NavXT Multidimension Extensions requires %2$s', 'breadcrumb-navxt-multidim-ext') . '</p></div>', $version, '5.1.0');
 			}
-			printf('<div class="error"><p>' . __('Your Breadcrumb NavXT version is too old, please upgrade to a newer version. Your version is %1$s, Breadcrumb NavXT Multidimension Extensions requires %2$s', 'breadcrumb-navxt-multidim-ext') . '</p></div>', $version, '5.1.0');
+			//If we are in the admin, let's print a warning then return
+			if(is_admin())
+			{
+				add_action('admin_notices', 'bcn_multidim_ext_old');
+			}
+			return;
 		}
-		//If we are in the admin, let's print a warning then return
-		if(is_admin())
+		//If they are on 5.0.x, load the leagacy multidim class
+		else if(!class_exists('bcn_breadcrumb_trail_multidim'))
 		{
-			add_action('admin_notices', 'bcn_multidim_ext_old');
+			require_once(dirname(__FILE__) . '/class.bcn_breadcrumb_trail_multidim_legacy.php');
 		}
-		return;
 	}
-	//Otherwise we can now include our extended breadcrumb trail
+	//Otherwise we can now include our extended breadcrumb trail for 5.1.x
 	else if(!class_exists('bcn_breadcrumb_trail_multidim'))
 	{
 		require_once(dirname(__FILE__) . '/class.bcn_breadcrumb_trail_multidim.php');
