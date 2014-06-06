@@ -10,7 +10,7 @@ Automates the generation of multidimensional list breadcrumb trails with Breadcr
 
 == Description ==
 
-In the [Vista-Like Breadcrumbs for WordPress] (http://mtekk.us/archives/guides/vista-like-breadcrumbs-for-wordpress/) guide, code was presented for recreating the breadcrumb style featured in Windows Vista and Windows 7. That code eventually was updated and placed into a plugin to ease implementation. This is that plugin.
+In the [Vista-Like Breadcrumbs for WordPress](http://mtekk.us/archives/guides/vista-like-breadcrumbs-for-wordpress/) guide, code was presented for recreating the breadcrumb style featured in Windows Vista and Windows 7. That code eventually was updated and placed into a plugin to ease implementation. This is that plugin.
 
 = Translations =
 
