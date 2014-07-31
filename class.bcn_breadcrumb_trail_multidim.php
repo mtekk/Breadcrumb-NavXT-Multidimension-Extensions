@@ -116,9 +116,15 @@ class bcn_breadcrumb_trail_multidim extends bcn_breadcrumb_trail
      * 
      * @param $post WP_Post Instance of WP_Post object to create a breadcrumb for
      */
-    protected function do_post(WP_Post $post)
+    protected function do_post($post)
     {
 		global $page;
+		//If we did not get a WP_Post object, warn developer and return early
+		if(!is_object($post) || get_class($post) !== 'WP_Post')
+		{
+			_doing_it_wrong(__CLASS__ . '::' . __FUNCTION__, __('$post global is not of type WP_Post', 'breadcrumb-navxt'), '5.1.1');
+			return;
+		}
 		$suffix = '';
 		if(is_post_type_hierarchical($post->post_type))
 		{
@@ -137,7 +143,7 @@ class bcn_breadcrumb_trail_multidim extends bcn_breadcrumb_trail
 			//Change the template over to the normal, linked one
 			$breadcrumb->set_template($this->opt['Hpost_' . $post->post_type . '_template']);
 			//Add the link
-			$breadcrumb->set_url(get_permalink());
+			$breadcrumb->set_url(get_permalink($post));
 		}
 		//If we have page, force it to go through the parent tree
 		if($post->post_type === 'page')
