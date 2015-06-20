@@ -1,5 +1,5 @@
 <?php
-/*  Copyright 2011-2014  John Havlik  (email : john.havlik@mtekk.us)
+/*  Copyright 2011-2015  John Havlik  (email : john.havlik@mtekk.us)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -36,9 +36,9 @@ class bcn_breadcrumb_trail_multidim extends bcn_breadcrumb_trail
 		global $post;
 		//Get the current category object, filter applied within this call
 		$term = get_term($id, $taxonomy);
-		$suffix = '<ul>' . wp_list_categories('depth=1&parent=' . $term->parent . '&exclude=' . $id . '&echo=0&taxonomy=' . $taxonomy . '&title_li=') . '</ul>';
+		$suffix = '<ul>' . wp_list_categories('depth=1&parent=' . $term->parent . '&exclude=' . $id . '&echo=0&taxonomy=' . $taxonomy . '&show_option_none=bcn_multidim_oopse&title_li=') . '</ul>';
 		//Hide empty enteries
-		if($suffix === '<ul><li>No categories</li></ul>')
+		if(strpos($suffix, 'bcn_multidim_oopse') !== false)
 		{
 			$suffix = '';
 		}
@@ -62,9 +62,9 @@ class bcn_breadcrumb_trail_multidim extends bcn_breadcrumb_trail
 		global $wp_query;
 		//Simmilar to using $post, but for things $post doesn't cover
 		$term = $wp_query->get_queried_object();
-		$suffix = '<ul>' . wp_list_categories('depth=1&parent=' . $term->parent . '&exclude=' . $term->term_id . '&echo=0&taxonomy=' . $term->taxonomy . '&title_li=') . '</ul>';
+		$suffix = '<ul>' . wp_list_categories('depth=1&parent=' . $term->parent . '&exclude=' . $term->term_id . '&echo=0&taxonomy=' . $term->taxonomy . '&show_option_none=bcn_multidim_oopse&title_li=') . '</ul>';
 		//Hide empty enteries
-		if($suffix === '<ul><li>No categories</li></ul>')
+		if(strpos($suffix, 'bcn_multidim_oopse') !== false)
 		{
 			$suffix = '';
 		}
@@ -141,7 +141,7 @@ class bcn_breadcrumb_trail_multidim extends bcn_breadcrumb_trail
 		if($this->opt['bcurrent_item_linked'] || ($page > 1 && $this->opt['bpaged_display']))
 		{
 			//Change the template over to the normal, linked one
-			$breadcrumb->set_template($this->opt['Hpost_' . $post->post_type . '_template']);
+			$breadcrumb->set_template($this->opt['Hpost_' . $post->post_type . '_template'] . $suffix);
 			//Add the link
 			$breadcrumb->set_url(get_permalink($post));
 		}

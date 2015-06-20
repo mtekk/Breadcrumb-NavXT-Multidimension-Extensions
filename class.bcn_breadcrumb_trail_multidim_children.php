@@ -36,9 +36,9 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 		global $post;
 		//Get the current category object, filter applied within this call
 		$term = get_term($id, $taxonomy);
-		$suffix = '<ul>' . wp_list_categories('depth=1&parent=' . $term->parent . '&echo=0&taxonomy=' . $taxonomy . '&title_li=') . '</ul>';
+		$suffix = '<ul>' . wp_list_categories('depth=1&parent=' . $term->term_id . '&echo=0&taxonomy=' . $taxonomy . '&show_option_none=bcn_multidim_oopse&title_li=') . '</ul>';
 		//Hide empty enteries
-		if($suffix === '<ul><li>No categories</li></ul>')
+		if(strpos($suffix, 'bcn_multidim_oopse') !== false)
 		{
 			$suffix = '';
 		}
@@ -62,9 +62,9 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 		global $wp_query;
 		//Simmilar to using $post, but for things $post doesn't cover
 		$term = $wp_query->get_queried_object();
-		$suffix = '<ul>' . wp_list_categories('depth=1&parent=' . $term->term_id . '&echo=0&taxonomy=' . $term->taxonomy . '&title_li=') . '</ul>';
+		$suffix = '<ul>' . wp_list_categories('depth=1&parent=' . $term->term_id . '&echo=0&taxonomy=' . $term->taxonomy . '&show_option_none=bcn_multidim_oopse&title_li=') . '</ul>';
 		//Hide empty enteries
-		if($suffix === '<ul><li>No categories</li></ul>')
+		if(strpos($suffix, 'bcn_multidim_oopse') !== false)
 		{
 			$suffix = '';
 		}
@@ -93,6 +93,8 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 	function post_parents($id, $frontpage)
 	{
 		//Use WordPress API, though a bit heavier than the old method, this will ensure compatibility with other plug-ins
+		$parent = get_post($id);
+		//Use WordPress API, though a bit heavier than the old method, this will ensure compatibility with other plug-ins
 		$suffix = '<ul>' . wp_list_pages('depth=1&child_of=' . $id . '&exclude=' . $id . '&echo=0&title_li=') . '</ul>';
 		//Hide empty enteries
 		if($suffix === '<ul></ul>')
@@ -106,6 +108,60 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 		{
 			//If valid, recursively call this function
 			$this->post_parents($parent->post_parent, $frontpage);
+		}
+	}
+    /**
+     * A Breadcrumb Trail Filling Function
+     * 
+     * This functions fills a breadcrumb for posts
+     * 
+     * @param $post WP_Post Instance of WP_Post object to create a breadcrumb for
+     */
+    protected function do_post($post)
+    {
+		global $page;
+		//If we did not get a WP_Post object, warn developer and return early
+		if(!is_object($post) || get_class($post) !== 'WP_Post')
+		{
+			_doing_it_wrong(__CLASS__ . '::' . __FUNCTION__, __('$post global is not of type WP_Post', 'breadcrumb-navxt'), '5.1.1');
+			return;
+		}
+		$suffix = '';
+		if(is_post_type_hierarchical($post->post_type))
+		{
+			$suffix = '<ul>' . wp_list_pages('depth=1&child_of=' . $post->ID . '&exclude=' . $post->ID . '&echo=0&title_li=') . '</ul>';
+			//Hide empty enteries
+			if($suffix === '<ul></ul>')
+			{
+				$suffix = '';
+			}
+		}
+		//Place the breadcrumb in the trail, uses the bcn_breadcrumb constructor to set the title, template, and type
+		$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title($post), $this->opt['Hpost_' . $post->post_type . '_template_no_anchor'] . $suffix, array('post', 'post-' . $post->post_type, 'current-item'), NULL, $post->ID));
+		//If the current item is to be linked, or this is a paged post, add in links
+		if($this->opt['bcurrent_item_linked'] || ($page > 1 && $this->opt['bpaged_display']))
+		{
+			//Change the template over to the normal, linked one
+			$breadcrumb->set_template($this->opt['Hpost_' . $post->post_type . '_template'] . $suffix);
+			//Add the link
+			$breadcrumb->set_url(get_permalink($post));
+		}
+		//If we have page, force it to go through the parent tree
+		if($post->post_type === 'page')
+		{
+			//Done with the current item, now on to the parents
+			$frontpage = get_option('page_on_front');
+			//If there is a parent page let's find it
+			if($post->post_parent && $post->ID != $post->post_parent && $frontpage != $post->post_parent)
+			{
+				$this->post_parents($post->post_parent, $frontpage);
+			}
+		}
+		//Otherwise we need the follow the hiearchy tree
+		else
+		{
+			//Handle the post's hiearchy
+			$this->post_hierarchy($post->ID, $post->post_type, $post->post_parent);
 		}
 	}
 }
