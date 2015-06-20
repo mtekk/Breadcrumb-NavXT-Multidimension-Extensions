@@ -89,17 +89,53 @@ function bcn_multidim_ext_init()
 			}
 			return;
 		}
-		//If they are on 5.0.x, load the leagacy multidim class
+		//If they are on 5.1.0, load the leagacy multidim class
 		else if(!class_exists('bcn_breadcrumb_trail_multidim'))
 		{
 			require_once(dirname(__FILE__) . '/class.bcn_breadcrumb_trail_multidim_legacy.php');
 		}
 	}
-	//Otherwise we can now include our extended breadcrumb trail for 5.1.x+
+	//Otherwise we can now include our extended breadcrumb trail for 5.1.1+
 	else if(!class_exists('bcn_breadcrumb_trail_multidim'))
 	{
 		require_once(dirname(__FILE__) . '/class.bcn_breadcrumb_trail_multidim.php');
 		require_once(dirname(__FILE__) . '/class.bcn_breadcrumb_trail_multidim_children.php');
+	}
+}
+add_action('bcn_widget_display_types', 'bcn_multidim_ext_widget_types', 10);
+/**
+ * Adds the two multidimension types to the types option in the Breadcrumb NavXT widget
+ * 
+ * @param array $instance The settings array instance for this Widget
+ */
+function bcn_multidim_ext_widget_types($instance)
+{
+	?>
+	<option value="multidim" <?php selected('multidim', $instance['type']);?>><?php _e('Multidimensional (siblings in 2nd dimension)', 'breadcrumb-navxt-multidim-ext'); ?></option>
+	<option value="multidim_child" <?php selected('multidim_child', $instance['type']);?>><?php _e('Multidimensional (children in 2nd dimension)', 'breadcrumb-navxt-multidim-ext'); ?></option>
+	<?php
+}
+add_action('bcn_widget_display_trail', 'bcn_multidim_ext_widget_display', 10);
+/**
+ * Checks and displays the proper breadcrumb trail type, if applicable
+ * 
+ * @param array $instance The settings array instance for this Widget
+ */
+function bcn_multidim_ext_widget_display($instance)
+{
+	if($instance['type'] == 'multidim')
+	{
+		//Display the multidimensional list output breadcrumb
+		echo $instance['pretext'] . '<ol class="breadcrumb_trail breadcrumbs">';
+		bcn_display_list_multidim(false, $instance['linked'], $instance['reverse']);
+		echo '</ol>';
+	}
+	else if($instance['type'] == 'multidim_child')
+	{
+		//Display the multidimensional list output breadcrumb
+		echo $instance['pretext'] . '<ol class="breadcrumb_trail breadcrumbs">';
+		bcn_display_list_multidim_children(false, $instance['linked'], $instance['reverse']);
+		echo '</ol>';
 	}
 }
 /**
@@ -129,6 +165,11 @@ function bcn_display_list_multidim($return = false, $linked = true, $reverse = f
 */
 function bcn_display_list_multidim_children($return = false, $linked = true, $reverse = false)
 {
+	if(!class_exists('bcn_breadcrumb_trail_multidim_children'))
+	{
+		_doing_it_wrong(__FUNCTION__, __('Breadcrumb NavXT 5.1.1 or newer is required for the latest features', 'breadcrumb-navxt-multidim-ext'), '1.9.0');
+		return;
+	}
 	//Make new instance of the ext_breadcrumb_trail object
 	$breadcrumb_trail = new bcn_breadcrumb_trail_multidim_children();
 	//Grab options from the database
