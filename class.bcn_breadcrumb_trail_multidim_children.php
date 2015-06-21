@@ -31,7 +31,7 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 	 * @param int $id The id of the term.
 	 * @param string $taxonomy The name of the taxonomy that the term belongs to
 	 */
-	function term_parents($id, $taxonomy)
+	protected function term_parents($id, $taxonomy)
 	{
 		global $post;
 		//Get the current category object, filter applied within this call
@@ -57,7 +57,7 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 	 * This function fills a breadcrumb for any taxonomy archive, was previously two separate functions. Was modified to output a list of related level terms.
 	 * 
 	 */
-	function do_archive_by_term()
+	protected function do_archive_by_term()
 	{
 		global $wp_query;
 		//Simmilar to using $post, but for things $post doesn't cover
@@ -90,7 +90,7 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 	 * @param int $id The id of the parent page.
 	 * @param int $frontpage The id of the front page.
 	 */
-	function post_parents($id, $frontpage)
+	protected function post_parents($id, $frontpage)
 	{
 		//Use WordPress API, though a bit heavier than the old method, this will ensure compatibility with other plug-ins
 		$parent = get_post($id);
