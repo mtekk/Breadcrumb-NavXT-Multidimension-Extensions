@@ -163,4 +163,40 @@ class bcn_breadcrumb_trail_multidim extends bcn_breadcrumb_trail
 			$this->post_hierarchy($post->ID, $post->post_type, $post->post_parent);
 		}
 	}
+	/**
+	 * A Breadcrumb Trail Filling Function
+	 * 
+	 * This functions fills a breadcrumb for the home page.
+	 */
+	protected function do_home()
+	{
+		global $post, $current_site;
+		//On everything else we need to link, but no current item (pre/suf)fixes
+		if($this->opt['bhome_display'])
+		{
+			$suffix = '';
+			if(is_singular())
+			{
+				//Use WordPress API, though a bit heavier than the old method, this will ensure compatibility with other plug-ins
+				$suffix = '<ul>' . wp_list_pages('depth=1&child_of=0&echo=0&title_li=') . '</ul>';
+				//Hide empty enteries
+				if($suffix === '<ul></ul>')
+				{
+					$suffix = '';
+				}
+			}
+			//Get the site name
+			$site_name = get_option('blogname');
+			//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+			$breadcrumb = $this->add(new bcn_breadcrumb($site_name, $this->opt['Hhome_template'] . $suffix, array('home'), get_home_url()));
+			//If we have a multi site and are not on the main site we need to add a breadcrumb for the main site
+			if($this->opt['bmainsite_display'] && !is_main_site())
+			{
+				//Get the site name
+				$site_name = get_site_option('site_name');
+				//Place the main site breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+				$breadcrumb = $this->add(new bcn_breadcrumb($site_name, $this->opt['Hmainsite_template'], array('main-home'), get_home_url($current_site->blog_id)));
+			}
+		}
+	}
 }
