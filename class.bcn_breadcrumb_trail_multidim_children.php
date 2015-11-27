@@ -36,7 +36,9 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 		global $post;
 		//Get the current category object, filter applied within this call
 		$term = get_term($id, $taxonomy);
-		$suffix = '<ul>' . wp_list_categories('depth=1&parent=' . $term->term_id . '&echo=0&taxonomy=' . $taxonomy . '&show_option_none=bcn_multidim_oopse&title_li=') . '</ul>';
+		//Assemble our wp_list_categories arguments, filter as well
+		$args = apply_filters('bcn_multidim_term_children', 'depth=1&parent=' . $id . '&echo=0&taxonomy=' . $taxonomy . '&show_option_none=bcn_multidim_oopse&title_li=', $id, $taxonomy);
+		$suffix = '<ul>' . wp_list_categories($args) . '</ul>';
 		//Hide empty enteries
 		if(strpos($suffix, 'bcn_multidim_oopse') !== false)
 		{
@@ -62,7 +64,9 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 		global $wp_query;
 		//Simmilar to using $post, but for things $post doesn't cover
 		$term = $wp_query->get_queried_object();
-		$suffix = '<ul>' . wp_list_categories('depth=1&parent=' . $term->term_id . '&echo=0&taxonomy=' . $term->taxonomy . '&show_option_none=bcn_multidim_oopse&title_li=') . '</ul>';
+		//Assemble our wp_list_categories arguments, filter as well
+		$args = apply_filters('bcn_multidim_term_children', 'depth=1&parent=' . $term->term_id . '&echo=0&taxonomy=' . $term->taxonomy . '&show_option_none=bcn_multidim_oopse&title_li=', $term->term_id, $term->taxonomy);
+		$suffix = '<ul>' . wp_list_categories($args) . '</ul>';
 		//Hide empty enteries
 		if(strpos($suffix, 'bcn_multidim_oopse') !== false)
 		{
@@ -94,8 +98,9 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 	{
 		//Use WordPress API, though a bit heavier than the old method, this will ensure compatibility with other plug-ins
 		$parent = get_post($id);
-		//Use WordPress API, though a bit heavier than the old method, this will ensure compatibility with other plug-ins
-		$suffix = '<ul>' . wp_list_pages('depth=1&child_of=' . $id . '&exclude=' . $id . '&echo=0&title_li=') . '</ul>';
+		//Assemble our wp_list_pages arguments, filter as well
+		$args = apply_filters('bcn_multidim_post_children', 'depth=1&child_of=' . $id . '&exclude=' . $id . '&echo=0&title_li=', $id);
+		$suffix = '<ul>' . wp_list_pages($args) . '</ul>';
 		//Hide empty enteries
 		if($suffix === '<ul></ul>')
 		{
@@ -129,7 +134,9 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 		$suffix = '';
 		if(is_post_type_hierarchical($post->post_type))
 		{
-			$suffix = '<ul>' . wp_list_pages('depth=1&child_of=' . $post->ID . '&exclude=' . $post->ID . '&echo=0&title_li=') . '</ul>';
+			//Assemble our wp_list_pages arguments, filter as well
+			$args = apply_filters('bcn_multidim_post_children', 'depth=1&child_of=' . $post->ID . '&exclude=' . $post->ID . '&echo=0&title_li=', $post->ID);
+			$suffix = '<ul>' . wp_list_pages($args) . '</ul>';
 			//Hide empty enteries
 			if($suffix === '<ul></ul>')
 			{
@@ -205,8 +212,9 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 			//We'll have to check if this ID is valid, e.g. user has specified a posts page
 			if($root_id && $root_id != $frontpage_id)
 			{
-				//Use WordPress API, though a bit heavier than the old method, this will ensure compatibility with other plug-ins
-				$suffix = '<ul>' . wp_list_pages('depth=1&child_of=' . $root_id . '&exclude=' . $root_id . '&echo=0&title_li=') . '</ul>';
+				//Assemble our wp_list_pages arguments, filter as well
+				$args = apply_filters('bcn_multidim_post_children', 'depth=1&child_of=' . $root_id . '&exclude=' . $root_id . '&echo=0&title_li=', $root_id);
+				$suffix = '<ul>' . wp_list_pages($args) . '</ul>';
 				//Hide empty enteries
 				if($suffix === '<ul></ul>')
 				{
@@ -250,8 +258,9 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 		{
 			$frontpage_id = get_option('page_on_front');
 			$suffix = '';
-			//Use WordPress API, though a bit heavier than the old method, this will ensure compatibility with other plug-ins
-			$suffix = '<ul>' . wp_list_pages('depth=1&child_of=' . $frontpage_id . '&exclude=' . $frontpage_id . '&echo=0&title_li=') . '</ul>';
+			//Assemble our wp_list_pages arguments, filter as well
+			$args = apply_filters('bcn_multidim_post_children', 'depth=1&child_of=' . $frontpage_id . '&exclude=' . $frontpage_id . '&echo=0&title_li=', $frontpage_id);
+			$suffix = '<ul>' . wp_list_pages($args) . '</ul>';
 			//Hide empty enteries
 			if($suffix === '<ul></ul>')
 			{
