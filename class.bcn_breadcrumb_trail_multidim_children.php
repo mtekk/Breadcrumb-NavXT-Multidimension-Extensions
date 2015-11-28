@@ -280,4 +280,45 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 			}
 		}
 	}
+	/**
+	 * A Breadcrumb Trail Filling Function
+	 * 
+	 * This functions fills a breadcrumb for the front page.
+	 */
+	protected function do_front_page()
+	{
+		global $post, $current_site;
+		$suffix = '';
+		if($this->opt['bhome_display_children'])
+		{
+			$frontpage_id = get_option('page_on_front');
+			//Assemble our wp_list_pages arguments, filter as well
+			$args = apply_filters('bcn_multidim_post_children', 'depth=1&child_of=' . $frontpage_id . '&exclude=' . $frontpage_id . '&echo=0&title_li=', $frontpage_id);
+			$suffix = '<ul>' . wp_list_pages($args) . '</ul>';
+			//Hide empty enteries
+			if($suffix === '<ul></ul>')
+			{
+				$suffix = '';
+			}
+		}
+		//Get the site name
+		$site_name = get_option('blogname');
+		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+		$breadcrumb = $this->add(new bcn_breadcrumb($site_name, $this->opt['Hhome_template_no_anchor'] . $suffix, array('home', 'current-item')));
+		//If we're paged, let's link to the first page
+		if($this->opt['bcurrent_item_linked'] || (is_paged() && $this->opt['bpaged_display']))
+		{
+			$breadcrumb->set_template($this->opt['Hhome_template'] . $suffix);
+			//Figure out the anchor for home page
+			$breadcrumb->set_url(get_home_url());
+		}
+		//If we have a multi site and are not on the main site we may need to add a breadcrumb for the main site
+		if($this->opt['bmainsite_display'] && !is_main_site())
+		{
+			//Get the site name
+			$site_name = get_site_option('site_name');
+			//Place the main site breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
+			$breadcrumb = $this->add(new bcn_breadcrumb($site_name, $this->opt['Hmainsite_template'], array('main-home'), get_home_url($current_site->blog_id)));
+		}
+	}
 }

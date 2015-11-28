@@ -102,6 +102,22 @@ function bcn_multidim_ext_init()
 		require_once(dirname(__FILE__) . '/class.bcn_breadcrumb_trail_multidim_children.php');
 	}
 }
+add_filter('bcn_settings_init', 'bcn_multidim_ext_settings_setup');
+/**
+ * Adds in default settings needed for Breadcrumb NavXT Multidimension Extensions
+ * 
+ * @param array $settings The settings array
+ * @return array The filtered/updated settings array
+ */
+function bcn_multidim_ext_settings_setup($settings)
+{
+	if(!isset($settings['bhome_display_children']))
+	{
+		//Add our 'default' use_menu option
+		$settings['bhome_display_children'] = false;
+	}
+	return $settings; 
+}
 add_action('bcn_widget_display_types', 'bcn_multidim_ext_widget_types', 10);
 /**
  * Adds the two multidimension types to the types option in the Breadcrumb NavXT widget
@@ -138,6 +154,22 @@ function bcn_multidim_ext_widget_display($instance)
 		echo '</ol>';
 	}
 }
+add_action('plugins_loaded', 'bcn_multidim_ext_admin_init', 16);
+function bcn_multidim_ext_admin_init()
+{
+	//If this is the admin, should load the admin settings update code
+	if(is_admin() && class_exists('mtekk_adminKit'))
+	{
+		//Check to see if someone else has setup the extensions settings tab
+		if(has_action('bcn_after_settings_tabs', 'bcn_extensions_tab') === false)
+		{
+			require_once(dirname(__FILE__) . '/includes/function.bcn_extensions_tab.php');
+			add_action('bcn_after_settings_tabs', 'bcn_extensions_tab');
+		}
+		require_once(dirname(__FILE__) . '/class.bcn_multidim_admin.php');
+		$bcn_multidim_admin = new bcn_multidim_admin(plugin_basename(__FILE__));
+	}
+}
 /**
 * Outputs the breadcrumb trail in a list with the sibling pages/terms of the breadcrumb in its second dimension
 * 
@@ -149,8 +181,10 @@ function bcn_display_list_multidim($return = false, $linked = true, $reverse = f
 {
 	//Make new instance of the ext_breadcrumb_trail object
 	$breadcrumb_trail = new bcn_breadcrumb_trail_multidim();
-	//Grab options from the database
-	$breadcrumb_trail->opt = get_option('bcn_options');
+	//Initial setup of options
+	breadcrumb_navxt::setup_options($breadcrumb_trail->opt);
+	//Merge in options from the database
+	$breadcrumb_trail->opt = wp_parse_args(get_option('bcn_options'), $breadcrumb_trail->opt);
 	//Fill the breadcrumb trail
 	$breadcrumb_trail->fill();
 	//Display the trail
@@ -172,8 +206,10 @@ function bcn_display_list_multidim_children($return = false, $linked = true, $re
 	}
 	//Make new instance of the ext_breadcrumb_trail object
 	$breadcrumb_trail = new bcn_breadcrumb_trail_multidim_children();
-	//Grab options from the database
-	$breadcrumb_trail->opt = get_option('bcn_options');
+	//Initial setup of options
+	breadcrumb_navxt::setup_options($breadcrumb_trail->opt);
+	//Merge in options from the database
+	$breadcrumb_trail->opt = wp_parse_args(get_option('bcn_options'), $breadcrumb_trail->opt);
 	//Fill the breadcrumb trail
 	$breadcrumb_trail->fill();
 	//Display the trail
