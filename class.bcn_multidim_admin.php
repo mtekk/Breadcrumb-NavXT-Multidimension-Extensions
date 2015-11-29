@@ -19,7 +19,7 @@
 require_once(dirname(__FILE__) . '/includes/block_direct_access.php');
 class bcn_multidim_admin extends mtekk_adminKit
 {
-	protected $version = '1.9.0';
+	protected $version = '2.0.0';
 	protected $access_level = 'manage_options';
 	protected $unique_prefix = 'bcn';
 	protected $identifier = 'breadcrumb-navxt';
