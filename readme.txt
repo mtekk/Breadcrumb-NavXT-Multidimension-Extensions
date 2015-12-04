@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=FD5XE
 Tags: breadcrumb navxt, breadcrumb, breadcrumbs, trail, navigation, menu
 Requires at least: 4.0
 Tested up to: 4.3
-Stable tag: 1.9.0
+Stable tag: 2.0.0
 License: GPLv2 or later
 Automates the generation of multidimensional list breadcrumb trails with Breadcrumb NavXT.
 
@@ -14,7 +14,7 @@ In the [Vista-Like Breadcrumbs for WordPress](http://mtekk.us/archives/guides/vi
 
 = Breadcrumb NavXT Versions Supported =
 
-This plugin supports Breadcrumb NavXT 5.0.x and Breadcrumb NavXT 5.1.x.
+This plugin supports Breadcrumb NavXT 5.1.x and Breadcrumb NavXT 5.3.x. Note that not all features are available on older Breadcrumb NavXT versions.
 
 = Translations =
 
@@ -48,27 +48,53 @@ Save the file (upload if applicable). Now you should have a breadcrumb trail on 
 Please visit [Breadcrumb NavXT's Documentation](http://mtekk.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/ "Go to Breadcrumb NavXT's Documentation.") page for more information.
 
 == Changelog ==
+= 2.0.0 =
+Release date: December 3rd, 2015
+
+* New feature: Added setting for controlling the display of children of the home page while on the homepage.
+* New feature: Added bcn_multidim_term_children filter.
+* New feature: Added bcn_multidim_post_children filter. 
+
 = 1.9.0 =
+Release date: Release date: August 21st, 2015
+
 * New feature: Added new `bcn_display_list_multidim_children()` function which places the children of a breadcrumb into the second dimension
 * New feature: Support for the Breadcrumb NavXT widget, requires Breadcrumb NavXT 5.3.0 or newer
 * Bug fix: Fixed issue where the second dimension would not be populated for the current item if the current item was linked
 * Bug fix: Fixed issue where an “Empty Category” message would appear in the second dimension for terms without children or siblings
+
 = 1.8.1 =
+Release date: July 30th, 2014
+
 * Behavior Change: Dropped support of version of Breadcrumb NavXT prior to 5.1.x
 * Bug fix: Fixed issues relating to support for Breadcrumb NavXT 5.1.1
+
 = 1.8.0 =
+Release date: June 6th, 2014
+
 * Behavior Change: Refactored entire plugin
 * Bug fix: Fixed issues relating to support for Breadcrumb NavXT 5.1.x
+
 = 1.7.0 =
+Release date: April 5th, 2014
+
 * Behavior Change: Dropped support of version of Breadcrumb NavXT prior to 5.0.x
 * Bug fix: Fixed issues relating to support for Breadcrumb NavXT 5.0.x
+
 = 1.6.0 =
+Release date: January 12th, 2013 
+
 * Bug fix: Fixed issues relating to support for Breadcrumb NavXT 4.2.x
+
 = 1.5.0 =
 * Initial Public Release
 
 == Upgrade Notice ==
+= 2.0.0 =
+Added two new filters and a setting to control the display the home breadcrumb's children when on the home page.
+
 = 1.9.0 =
 Added  new `bcn_display_list_multidim_children()` function, added support for the Breadcrumb NavXT Widget, and fixed some bugs.
+
 = 1.8.0 =
 Added support for Breadcrumb NavXT 5.1.x
