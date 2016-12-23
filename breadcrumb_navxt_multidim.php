@@ -3,11 +3,11 @@
 Plugin Name: Breadcrumb NavXT Multidimension Extensions
 Plugin URI: https://mtekk.us/extensions/breadcrumb-navxt-multidimension-extensions/
 Description: Adds the bcn_display_list_multidim function for Vista like breadcrumb trails. For details on how to use this plugin visit <a href="https://mtekk.us/extensions/breadcrumb-navxt-multidimension-extensions/">Breadcrumb NavXT Multidimension Extensions</a>. 
-Version: 2.0.0
+Version: 2.1.0
 Author: John Havlik
 Author URI: http://mtekk.us/
 */
-/*  Copyright 2011-2015  John Havlik  (email : john.havlik@mtekk.us)
+/*  Copyright 2011-2016  John Havlik  (email : john.havlik@mtekk.us)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,13 +24,13 @@ Author URI: http://mtekk.us/
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 require_once(dirname(__FILE__) . '/includes/block_direct_access.php');
-//Do a PHP version check, require 5.2 or newer
-if(version_compare(phpversion(), '5.2.0', '<'))
+//Do a PHP version check, require 5.3 or newer
+if(version_compare(phpversion(), '5.3.0', '<'))
 {
 	//Only purpose of this function is to echo out the PHP version error
 	function bcn_multidim_ext_phpold()
 	{
-		printf('<div class="error"><p>' . __('Your PHP version is too old, please upgrade to a newer version. Your version is %1$s, Breadcrumb NavXT requires %2$s', 'breadcrumb-navxt-multidim-ext') . '</p></div>', phpversion(), '5.2.0');
+		printf('<div class="error"><p>' . __('Your PHP version is too old, please upgrade to a newer version. Your version is %1$s, Breadcrumb NavXT requires %2$s', 'breadcrumb-navxt-multidim-ext') . '</p></div>', phpversion(), '5.3.0');
 	}
 	//If we are in the admin, let's print a warning then return
 	if(is_admin())
@@ -143,14 +143,14 @@ function bcn_multidim_ext_widget_display($instance)
 	{
 		//Display the multidimensional list output breadcrumb
 		echo $instance['pretext'] . '<ol class="breadcrumb_trail breadcrumbs">';
-		bcn_display_list_multidim(false, $instance['linked'], $instance['reverse']);
+		bcn_display_list_multidim(false, $instance['linked'], $instance['reverse'], $instance['force']);
 		echo '</ol>';
 	}
 	else if($instance['type'] == 'multidim_child')
 	{
 		//Display the multidimensional list output breadcrumb
 		echo $instance['pretext'] . '<ol class="breadcrumb_trail breadcrumbs">';
-		bcn_display_list_multidim_children(false, $instance['linked'], $instance['reverse']);
+		bcn_display_list_multidim_children(false, $instance['linked'], $instance['reverse'], $instance['force']);
 		echo '</ol>';
 	}
 }
@@ -171,13 +171,14 @@ function bcn_multidim_ext_admin_init()
 	}
 }
 /**
-* Outputs the breadcrumb trail in a list with the sibling pages/terms of the breadcrumb in its second dimension
-* 
-* @param bool $return Whether to return or echo the trail.
-* @param bool $linked Whether to allow hyperlinks in the trail or not.
-* @param bool $reverse Whether to reverse the output or not.
+ * Outputs the breadcrumb trail in a list with the sibling pages/terms of the breadcrumb in its second dimension
+ * 
+ * @param bool $return Whether to return or echo the trail.
+ * @param bool $linked Whether to allow hyperlinks in the trail or not.
+ * @param bool $reverse Whether to reverse the output or not.
+ * @param bool $force Whether or not to force the fill function to run. (optional)
 */
-function bcn_display_list_multidim($return = false, $linked = true, $reverse = false)
+function bcn_display_list_multidim($return = false, $linked = true, $reverse = false, $force = false)
 {
 	//Make new instance of the ext_breadcrumb_trail object
 	$breadcrumb_trail = new bcn_breadcrumb_trail_multidim();
@@ -185,19 +186,25 @@ function bcn_display_list_multidim($return = false, $linked = true, $reverse = f
 	breadcrumb_navxt::setup_options($breadcrumb_trail->opt);
 	//Merge in options from the database
 	$breadcrumb_trail->opt = wp_parse_args(get_option('bcn_options'), $breadcrumb_trail->opt);
+	//If we're being forced to fill the trail, clear it before calling fill
+	if($force)
+	{
+		$this->breadcrumb_trail->breadcrumbs = array();
+	}
 	//Fill the breadcrumb trail
 	$breadcrumb_trail->fill();
 	//Display the trail
 	return $breadcrumb_trail->display_list($return, $linked, $reverse);
 }
 /**
-* Outputs the breadcrumb trail in a list with the child pages/terms of the breadcrumb in its second dimension
-* 
-* @param bool $return Whether to return or echo the trail.
-* @param bool $linked Whether to allow hyperlinks in the trail or not.
-* @param bool $reverse Whether to reverse the output or not.
+ * Outputs the breadcrumb trail in a list with the child pages/terms of the breadcrumb in its second dimension
+ * 
+ * @param bool $return Whether to return or echo the trail.
+ * @param bool $linked Whether to allow hyperlinks in the trail or not.
+ * @param bool $reverse Whether to reverse the output or not.
+ * @param bool $force Whether or not to force the fill function to run. (optional)
 */
-function bcn_display_list_multidim_children($return = false, $linked = true, $reverse = false)
+function bcn_display_list_multidim_children($return = false, $linked = true, $reverse = false, $force = false)
 {
 	if(!class_exists('bcn_breadcrumb_trail_multidim_children'))
 	{
@@ -210,6 +217,11 @@ function bcn_display_list_multidim_children($return = false, $linked = true, $re
 	breadcrumb_navxt::setup_options($breadcrumb_trail->opt);
 	//Merge in options from the database
 	$breadcrumb_trail->opt = wp_parse_args(get_option('bcn_options'), $breadcrumb_trail->opt);
+	//If we're being forced to fill the trail, clear it before calling fill
+	if($force)
+	{
+		$this->breadcrumb_trail->breadcrumbs = array();
+	}
 	//Fill the breadcrumb trail
 	$breadcrumb_trail->fill();
 	//Display the trail
