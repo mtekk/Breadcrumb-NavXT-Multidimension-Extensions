@@ -2,9 +2,9 @@
 Contributors: mtekk
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=FD5XEU783BR8U&lc=US&item_name=Breadcrumb%20NavXT%20Donation&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted
 Tags: breadcrumb navxt, breadcrumb, breadcrumbs, trail, navigation, menu
-Requires at least: 4.0
-Tested up to: 4.3
-Stable tag: 2.0.0
+Requires at least: 4.3
+Tested up to: 4.7
+Stable tag: 2.1.0
 License: GPLv2 or later
 Automates the generation of multidimensional list breadcrumb trails with Breadcrumb NavXT.
 
@@ -48,6 +48,11 @@ Save the file (upload if applicable). Now you should have a breadcrumb trail on 
 Please visit [Breadcrumb NavXT's Documentation](http://mtekk.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/ "Go to Breadcrumb NavXT's Documentation.") page for more information.
 
 == Changelog ==
+= 2.1.0 =
+Release date: December 27th, 2015
+
+* New feature: Added support for Breadcrumb NavXT 5.6.0's force parameter in the display functions
+
 = 2.0.0 =
 Release date: December 3rd, 2015
 
@@ -90,11 +95,8 @@ Release date: January 12th, 2013
 * Initial Public Release
 
 == Upgrade Notice ==
+= 2.1.0 =
+Added support for Breadcrumb NavXT 5.6.0's force parameter in the display functions.
+
 = 2.0.0 =
 Added two new filters and a setting to control the display the home breadcrumb's children when on the home page.
-
-= 1.9.0 =
-Added  new `bcn_display_list_multidim_children()` function, added support for the Breadcrumb NavXT Widget, and fixed some bugs.
-
-= 1.8.0 =
-Added support for Breadcrumb NavXT 5.1.x
