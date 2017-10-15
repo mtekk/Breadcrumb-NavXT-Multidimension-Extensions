@@ -98,8 +98,8 @@ function bcn_multidim_ext_init()
 	//If the installed Breadcrumb NavXT is < 6.0 load BCN5 code
 	else if(!defined('breadcrumb_navxt::version') || version_compare(breadcrumb_navxt::version, '5.9.60', '<'))
 	{
-		require_once(dirname(__FILE__) . '/class.bcn_breadcrumb_trail_multidim5.php');
-		require_once(dirname(__FILE__) . '/class.bcn_breadcrumb_trail_multidim_children5.php');
+		require_once(dirname(__FILE__) . '/class.bcn_breadcrumb_trail_multidim_5.php');
+		require_once(dirname(__FILE__) . '/class.bcn_breadcrumb_trail_multidim_children_5.php');
 	}
 	//Otherwise we can now include our extended breadcrumb trail for 6.0.0+
 	else if(!class_exists('bcn_breadcrumb_trail_multidim'))
