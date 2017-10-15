@@ -3,11 +3,11 @@
 Plugin Name: Breadcrumb NavXT Multidimension Extensions
 Plugin URI: https://mtekk.us/extensions/breadcrumb-navxt-multidimension-extensions/
 Description: Adds the bcn_display_list_multidim function for Vista like breadcrumb trails. For details on how to use this plugin visit <a href="https://mtekk.us/extensions/breadcrumb-navxt-multidimension-extensions/">Breadcrumb NavXT Multidimension Extensions</a>. 
-Version: 2.1.0
+Version: 2.5.0
 Author: John Havlik
 Author URI: http://mtekk.us/
 */
-/*  Copyright 2011-2016  John Havlik  (email : john.havlik@mtekk.us)
+/*  Copyright 2011-2017  John Havlik  (email : john.havlik@mtekk.us)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,13 +24,13 @@ Author URI: http://mtekk.us/
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 require_once(dirname(__FILE__) . '/includes/block_direct_access.php');
-//Do a PHP version check, require 5.3 or newer
-if(version_compare(phpversion(), '5.3.0', '<'))
+//Do a PHP version check, require 5.4 or newer
+if(version_compare(phpversion(), '5.4.0', '<'))
 {
 	//Only purpose of this function is to echo out the PHP version error
 	function bcn_multidim_ext_phpold()
 	{
-		printf('<div class="error"><p>' . __('Your PHP version is too old, please upgrade to a newer version. Your version is %1$s, Breadcrumb NavXT requires %2$s', 'breadcrumb-navxt-multidim-ext') . '</p></div>', phpversion(), '5.3.0');
+		printf('<div class="error"><p>' . __('Your PHP version is too old, please upgrade to a newer version. Your version is %1$s, Breadcrumb NavXT requires %2$s', 'breadcrumb-navxt-multidim-ext') . '</p></div>', phpversion(), '5.4.0');
 	}
 	//If we are in the admin, let's print a warning then return
 	if(is_admin())
@@ -95,7 +95,13 @@ function bcn_multidim_ext_init()
 			require_once(dirname(__FILE__) . '/class.bcn_breadcrumb_trail_multidim_legacy.php');
 		}
 	}
-	//Otherwise we can now include our extended breadcrumb trail for 5.1.1+
+	//If the installed Breadcrumb NavXT is < 6.0 load BCN5 code
+	else if(!defined('breadcrumb_navxt::version') || version_compare(breadcrumb_navxt::version, '5.9.60', '<'))
+	{
+		require_once(dirname(__FILE__) . '/class.bcn_breadcrumb_trail_multidim5.php');
+		require_once(dirname(__FILE__) . '/class.bcn_breadcrumb_trail_multidim_children5.php');
+	}
+	//Otherwise we can now include our extended breadcrumb trail for 6.0.0+
 	else if(!class_exists('bcn_breadcrumb_trail_multidim'))
 	{
 		require_once(dirname(__FILE__) . '/class.bcn_breadcrumb_trail_multidim.php');
