@@ -216,13 +216,17 @@ class bcn_breadcrumb_trail_multidim extends bcn_breadcrumb_trail
 		if($force_link || ($is_current_item && $this->opt['bcurrent_item_linked']) || ($is_paged && $this->opt['bpaged_display']))
 		{
 			$frontpage_id = get_option('page_on_front');
-			//Assemble our wp_list_pages arguments, filter as well
-			$args = apply_filters('bcn_multidim_post_children', 'depth=1&child_of=0&echo=0&title_li=', $frontpage_id);
-			$suffix = '<ul>' . wp_list_pages($args) . '</ul>';
-			//Hide empty enteries
-			if($suffix === '<ul></ul>')
+			$suffix = '';
+			if(!$is_current_item)
 			{
-				$suffix = '';
+				//Assemble our wp_list_pages arguments, filter as well
+				$args = apply_filters('bcn_multidim_post_children', 'depth=1&child_of=0&echo=0&title_li=', $frontpage_id);
+				$suffix = '<ul>' . wp_list_pages($args) . '</ul>';
+				//Hide empty enteries
+				if($suffix === '<ul></ul>')
+				{
+					$suffix = '';
+				}
 			}
 			$breadcrumb->set_template($this->opt['Hhome_template'] . $suffix);
 			//Figure out the anchor for home page
@@ -236,5 +240,21 @@ class bcn_breadcrumb_trail_multidim extends bcn_breadcrumb_trail
 			//Place the main site breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
 			$breadcrumb = $this->add(new bcn_breadcrumb($site_name, $this->opt['Hmainsite_template'], array('main-home'), get_home_url($current_site->blog_id)));
 		}
+	}
+	/**
+	 * This functions outputs or returns the breadcrumb trail in list form.
+	 *
+	 * @deprecated 6.0.0 No longer needed, superceeded by $template parameter in display
+	 * 
+	 * @param bool $return Whether to return data or to echo it.
+	 * @param bool $linked[optional] Whether to allow hyperlinks in the trail or not.
+	 * @param bool $reverse[optional] Whether to reverse the output or not.
+	 * 
+	 * @return void Void if option to print out breadcrumb trail was chosen.
+	 * @return string String version of the breadcrumb trail.
+	 */
+	public function display_list($return = false, $linked = true, $reverse = false)
+	{
+		return $this->display($return, $linked, $reverse, "<li%3\$s>%1\$s</li>\n");
 	}
 }
