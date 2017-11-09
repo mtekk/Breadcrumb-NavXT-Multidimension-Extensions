@@ -49,7 +49,7 @@ Please visit [Breadcrumb NavXT's Documentation](http://mtekk.us/code/breadcrumb-
 
 == Changelog ==
 = 2.5.0 =
-Release date: October 18th, 2015
+Release date: November 8th, 2015
 
 * New feature: Added support for Breadcrumb NavXT 6.0.0.
 
