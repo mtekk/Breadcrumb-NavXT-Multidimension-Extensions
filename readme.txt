@@ -52,6 +52,7 @@ Please visit [Breadcrumb NavXT's Documentation](http://mtekk.us/code/breadcrumb-
 Release date: November 8th, 2015
 
 * New feature: Added support for Breadcrumb NavXT 6.0.0.
+* Bug fix: Moved localization textdomain to be compatible with the .org GlotPress install
 
 = 2.1.0 =
 Release date: December 27th, 2015

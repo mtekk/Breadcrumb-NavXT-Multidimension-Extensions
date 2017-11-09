@@ -30,7 +30,7 @@ if(version_compare(phpversion(), '5.4.0', '<'))
 	//Only purpose of this function is to echo out the PHP version error
 	function bcn_multidim_ext_phpold()
 	{
-		printf('<div class="error"><p>' . __('Your PHP version is too old, please upgrade to a newer version. Your version is %1$s, Breadcrumb NavXT requires %2$s', 'breadcrumb-navxt-multidim-ext') . '</p></div>', phpversion(), '5.4.0');
+		printf('<div class="error"><p>' . __('Your PHP version is too old, please upgrade to a newer version. Your version is %1$s, Breadcrumb NavXT requires %2$s', 'breadcrumb-navxt-multidimension-extensions') . '</p></div>', phpversion(), '5.4.0');
 	}
 	//If we are in the admin, let's print a warning then return
 	if(is_admin())
@@ -49,7 +49,7 @@ function bcn_multidim_ext_init()
 		//Only purpose of this function is to echo out the PHP version error
 		function bcn_multidim_ext_nobcn()
 		{
-			printf('<div class="error"><p>' . __('Breadcrumb NavXT is required for Breadcrumb NavXT Multidimension Extensions to work.', 'breadcrumb-navxt-multidim-ext') . '</p></div>');
+			printf('<div class="error"><p>' . __('Breadcrumb NavXT is required for Breadcrumb NavXT Multidimension Extensions to work.', 'breadcrumb-navxt-multidimension-extensions') . '</p></div>');
 		}
 		//If we are in the admin, let's print a warning then return
 		if(is_admin())
@@ -80,7 +80,7 @@ function bcn_multidim_ext_init()
 					global $breadcrumb_navxt;
 					$version = $breadcrumb_navxt->get_version();
 				}
-				printf('<div class="error"><p>' . __('Your Breadcrumb NavXT version is too old, please upgrade to a newer version. Your version is %1$s, Breadcrumb NavXT Multidimension Extensions requires %2$s', 'breadcrumb-navxt-multidim-ext') . '</p></div>', $version, '5.1.0');
+				printf('<div class="error"><p>' . __('Your Breadcrumb NavXT version is too old, please upgrade to a newer version. Your version is %1$s, Breadcrumb NavXT Multidimension Extensions requires %2$s', 'breadcrumb-navxt-multidimension-extensions') . '</p></div>', $version, '5.1.0');
 			}
 			//If we are in the admin, let's print a warning then return
 			if(is_admin())
@@ -133,8 +133,8 @@ add_action('bcn_widget_display_types', 'bcn_multidim_ext_widget_types', 10);
 function bcn_multidim_ext_widget_types($instance)
 {
 	?>
-	<option value="multidim" <?php selected('multidim', $instance['type']);?>><?php _e('Multidimensional (siblings in 2nd dimension)', 'breadcrumb-navxt-multidim-ext'); ?></option>
-	<option value="multidim_child" <?php selected('multidim_child', $instance['type']);?>><?php _e('Multidimensional (children in 2nd dimension)', 'breadcrumb-navxt-multidim-ext'); ?></option>
+	<option value="multidim" <?php selected('multidim', $instance['type']);?>><?php _e('Multidimensional (siblings in 2nd dimension)', 'breadcrumb-navxt-multidimension-extensions'); ?></option>
+	<option value="multidim_child" <?php selected('multidim_child', $instance['type']);?>><?php _e('Multidimensional (children in 2nd dimension)', 'breadcrumb-navxt-multidimension-extensions'); ?></option>
 	<?php
 }
 add_action('bcn_widget_display_trail', 'bcn_multidim_ext_widget_display', 10);
@@ -214,7 +214,7 @@ function bcn_display_list_multidim_children($return = false, $linked = true, $re
 {
 	if(!class_exists('bcn_breadcrumb_trail_multidim_children'))
 	{
-		_doing_it_wrong(__FUNCTION__, __('Breadcrumb NavXT 5.1.1 or newer is required for the latest features', 'breadcrumb-navxt-multidim-ext'), '1.9.0');
+		_doing_it_wrong(__FUNCTION__, __('Breadcrumb NavXT 5.1.1 or newer is required for the latest features', 'breadcrumb-navxt-multidimension-extensions'), '1.9.0');
 		return;
 	}
 	//Make new instance of the ext_breadcrumb_trail object

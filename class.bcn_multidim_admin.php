@@ -1,6 +1,6 @@
 <?php
 /*  
-	Copyright 2007-2016  John Havlik  (email : john.havlik@mtekk.us)
+	Copyright 2007-2017  John Havlik  (email : john.havlik@mtekk.us)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 require_once(dirname(__FILE__) . '/includes/block_direct_access.php');
 class bcn_multidim_admin extends mtekk_adminKit
 {
-	protected $version = '2.1.0';
+	protected $version = '2.5.0';
 	protected $access_level = 'manage_options';
 	protected $unique_prefix = 'bcn';
 	protected $identifier = 'breadcrumb-navxt';
@@ -66,10 +66,10 @@ class bcn_multidim_admin extends mtekk_adminKit
 		//Map our options so mtekk_adminKit can work it's magic
 		$this->opt =& $opt;
 		?>
-		<h3><?php _e('Multidimension Extensions', 'breadcrumb-navxt-multidim-ext'); ?></h3>
+		<h3><?php _e('Multidimension Extensions', 'breadcrumb-navxt-multidimension-extensions'); ?></h3>
 		<table class="form-table">
 			<?php
-				$this->input_check(__('Home Breadcrumb', 'breadcrumb-navxt-multidim-ext'), 'bhome_display_children', __('Display children of the home breadcrumb when on the front page.', 'breadcrumb-navxt-multidim-ext'), false, __('Followed when displaying children of an item in the 2nd dimension of a multidimensional breadcrumb trai.', 'breadcrumb-navxt-multidim-ext'));
+				$this->input_check(__('Home Breadcrumb', 'breadcrumb-navxt-multidimension-extensions'), 'bhome_display_children', __('Display children of the home breadcrumb when on the front page.', 'breadcrumb-navxt-multidimension-extensions'), false, __('Followed when displaying children of an item in the 2nd dimension of a multidimensional breadcrumb trai.', 'breadcrumb-navxt-multidimension-extensions'));
 			?>
 		</table>
 		<?php
