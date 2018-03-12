@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=FD5XE
 Tags: breadcrumb navxt, breadcrumb, breadcrumbs, trail, navigation, menu
 Requires at least: 4.6
 Tested up to: 4.9
-Stable tag: 2.5.0
+Stable tag: 2.5.1
 License: GPLv2 or later
 Automates the generation of multidimensional list breadcrumb trails with Breadcrumb NavXT.
 
@@ -48,8 +48,14 @@ Save the file (upload if applicable). Now you should have a breadcrumb trail on 
 Please visit [Breadcrumb NavXT's Documentation](http://mtekk.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/ "Go to Breadcrumb NavXT's Documentation.") page for more information.
 
 == Changelog ==
+= 2.5.1 =
+Release date: March 14th, 2018
+
+* Bug fix: Fixed issue where when using Breadcrumb NavXT 6.0.X under some circumstances caused an erroneous root page to be included for the page post type when using `bcn_display_multidim_children()`.
+* Bug fix: Fixed issue where the `$force` parameter did not work and threw PHP errors for the `bcn_display_list_multidim_*()` functions.
+
 = 2.5.0 =
-Release date: November 8th, 2015
+Release date: November 8th, 2017
 
 * New feature: Added support for Breadcrumb NavXT 6.0.0.
 * Bug fix: Moved localization textdomain to be compatible with the .org GlotPress install
