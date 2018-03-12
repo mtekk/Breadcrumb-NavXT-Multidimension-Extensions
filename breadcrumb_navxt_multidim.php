@@ -8,7 +8,7 @@ Author: John Havlik
 Author URI: http://mtekk.us/
 Text Domain: breadcrumb-navxt-multidimension-extensions
 */
-/*  Copyright 2011-2017  John Havlik  (email : john.havlik@mtekk.us)
+/*  Copyright 2011-2018  John Havlik  (email : john.havlik@mtekk.us)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -196,7 +196,7 @@ function bcn_display_list_multidim($return = false, $linked = true, $reverse = f
 	//If we're being forced to fill the trail, clear it before calling fill
 	if($force)
 	{
-		$this->breadcrumb_trail->breadcrumbs = array();
+		$breadcrumb_trail->breadcrumbs = array();
 	}
 	//Fill the breadcrumb trail
 	$breadcrumb_trail->fill();
@@ -227,7 +227,7 @@ function bcn_display_list_multidim_children($return = false, $linked = true, $re
 	//If we're being forced to fill the trail, clear it before calling fill
 	if($force)
 	{
-		$this->breadcrumb_trail->breadcrumbs = array();
+		$breadcrumb_trail->breadcrumbs = array();
 	}
 	//Fill the breadcrumb trail
 	$breadcrumb_trail->fill();
