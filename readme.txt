@@ -49,7 +49,7 @@ Please visit [Breadcrumb NavXT's Documentation](http://mtekk.us/code/breadcrumb-
 
 == Changelog ==
 = 2.5.1 =
-Release date: March 14th, 2018
+Release date: March 13th, 2018
 
 * Bug fix: Fixed issue where when using Breadcrumb NavXT 6.0.X under some circumstances caused an erroneous root page to be included for the page post type when using `bcn_display_multidim_children()`.
 * Bug fix: Fixed issue where the `$force` parameter did not work and threw PHP errors for the `bcn_display_list_multidim_*()` functions.
