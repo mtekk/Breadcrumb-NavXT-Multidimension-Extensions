@@ -255,6 +255,13 @@ class bcn_breadcrumb_trail_multidim extends bcn_breadcrumb_trail
 	 */
 	public function display_list($return = false, $linked = true, $reverse = false)
 	{
-		return $this->display($return, $linked, $reverse, "<li%3\$s>%1\$s</li>\n");
+		if($return)
+		{
+			return $this->display($linked, $reverse,  "<li%3\$s>%1\$s</li>\n");
+		}
+		else
+		{
+			echo $this->display($linked, $reverse,  "<li%3\$s>%1\$s</li>\n");
+		}
 	}
 }
