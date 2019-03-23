@@ -1,6 +1,6 @@
 <?php
 /*  
-	Copyright 2013-2016  John Havlik  (email : john.havlik@mtekk.us)
+	Copyright 2013-2019  John Havlik  (email : john.havlik@mtekk.us)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ function bcn_extensions_tab($opt)
 {
 	?>
 	<fieldset id="extensions" class="bcn_options">
-		<h3 class="tab-title" title="<?php _e('The settings for Breadcrumb NavXT extension plugins.', 'breadcrumb-navxt');?>"><?php _e('Extensions', 'breadcrumb-navxt'); ?></h3>
+		<legend class="screen-reader-text" data-title="<?php _e('The settings for Breadcrumb NavXT extension plugins.', 'breadcrumb-navxt');?>"><?php _e('Extensions', 'breadcrumb-navxt'); ?></legend>
 		<?php do_action('bcn_after_settings_tab_extensions', $opt); ?>
 	</fieldset>
 	<?php

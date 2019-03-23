@@ -3,12 +3,12 @@
 Plugin Name: Breadcrumb NavXT Multidimension Extensions
 Plugin URI: https://mtekk.us/extensions/breadcrumb-navxt-multidimension-extensions/
 Description: Adds the bcn_display_list_multidim function for Vista like breadcrumb trails. For details on how to use this plugin visit <a href="https://mtekk.us/extensions/breadcrumb-navxt-multidimension-extensions/">Breadcrumb NavXT Multidimension Extensions</a>. 
-Version: 2.5.2
+Version: 2.5.3
 Author: John Havlik
 Author URI: http://mtekk.us/
 Text Domain: breadcrumb-navxt-multidimension-extensions
 */
-/*  Copyright 2011-2018  John Havlik  (email : john.havlik@mtekk.us)
+/*  Copyright 2011-2019  John Havlik  (email : john.havlik@mtekk.us)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -170,7 +170,15 @@ function bcn_multidim_ext_admin_init()
 		//Check to see if someone else has setup the extensions settings tab
 		if(has_action('bcn_after_settings_tabs', 'bcn_extensions_tab') === false)
 		{
-			require_once(dirname(__FILE__) . '/includes/function.bcn_extensions_tab.php');
+			//All versions prior to 6.3.0 used a different extensions tab format
+			if(!defined('breadcrumb_navxt::version') || version_compare(breadcrumb_navxt::version, '6.2.60', '<'))
+			{
+				require_once(dirname(__FILE__) . '/includes/bcn_extensions_tab_62.php');
+			}
+			else
+			{
+				require_once(dirname(__FILE__) . '/includes/bcn_extensions_tab.php');
+			}
 			add_action('bcn_after_settings_tabs', 'bcn_extensions_tab');
 		}
 		require_once(dirname(__FILE__) . '/class.bcn_multidim_admin.php');
