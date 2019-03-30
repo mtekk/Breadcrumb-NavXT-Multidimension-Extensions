@@ -3,8 +3,8 @@ Contributors: mtekk
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=FD5XEU783BR8U&lc=US&item_name=Breadcrumb%20NavXT%20Donation&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted
 Tags: breadcrumb navxt, breadcrumb, breadcrumbs, trail, navigation, menu
 Requires at least: 4.7
-Tested up to: 4.9
-Stable tag: 2.5.2
+Tested up to: 5.1
+Stable tag: 2.5.3
 License: GPLv2 or later
 Automates the generation of multidimensional list breadcrumb trails with Breadcrumb NavXT.
 
@@ -14,7 +14,7 @@ In the [Vista-Like Breadcrumbs for WordPress](http://mtekk.us/archives/guides/vi
 
 = Breadcrumb NavXT Versions Supported =
 
-This plugin supports Breadcrumb NavXT 5.1.x, Breadcrumb NavXT 5.3+, and Breadcrumb NavXT 6.0.0. Note that not all features are available on older Breadcrumb NavXT versions.
+This plugin supports Breadcrumb NavXT 5.1+, and Breadcrumb NavXT 6.0+. Note that not all features are available on older Breadcrumb NavXT versions.
 
 = Translations =
 
@@ -48,6 +48,11 @@ Save the file (upload if applicable). Now you should have a breadcrumb trail on 
 Please visit [Breadcrumb NavXT's Documentation](http://mtekk.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/ "Go to Breadcrumb NavXT's Documentation.") page for more information.
 
 == Changelog ==
+= 2.5.3 =
+Release date: March 30th, 2019
+
+* Bug fix: Fixed compatibility issues with Breadcrumb NavXT 6.3.x
+
 = 2.5.2 =
 Release date: August 11th, 2018
 

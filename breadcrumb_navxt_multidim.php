@@ -69,7 +69,7 @@ function bcn_multidim_ext_init()
 			//Only purpose of this function is to echo out the Breadcrumb NavXT version error
 			function bcn_multidim_ext_old()
 			{
-				$version = __('unknown', 'breacrumb-navxt');
+				$version = __('unknown', 'breadcrumb-navxt');
 				//While not usefull today, in the future this will be hit
 				if(defined('breadcrumb_navxt::version'))
 				{
