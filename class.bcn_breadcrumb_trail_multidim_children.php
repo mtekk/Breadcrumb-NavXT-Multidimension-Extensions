@@ -1,5 +1,5 @@
 <?php
-/*  Copyright 2011-2018 John Havlik  (email : john.havlik@mtekk.us)
+/*  Copyright 2011-2019 John Havlik  (email : john.havlik@mtekk.us)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
