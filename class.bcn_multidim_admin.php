@@ -69,7 +69,7 @@ class bcn_multidim_admin extends mtekk_adminKit
 		<h3><?php _e('Multidimension Extensions', 'breadcrumb-navxt-multidimension-extensions'); ?></h3>
 		<table class="form-table">
 			<?php
-				$this->input_check(__('Home Breadcrumb', 'breadcrumb-navxt-multidimension-extensions'), 'bhome_display_children', __('Display children of the home breadcrumb when on the front page.', 'breadcrumb-navxt-multidimension-extensions'), false, __('Followed when displaying children of an item in the 2nd dimension of a multidimensional breadcrumb trai.', 'breadcrumb-navxt-multidimension-extensions'));
+				$this->input_check(__('Home Breadcrumb', 'breadcrumb-navxt-multidimension-extensions'), 'bhome_display_children', __('Display children of the home breadcrumb when on the front page.', 'breadcrumb-navxt-multidimension-extensions'), false, __('Followed when displaying children of an item in the 2nd dimension of a multidimensional breadcrumb trail.', 'breadcrumb-navxt-multidimension-extensions'));
 			?>
 		</table>
 		<?php
