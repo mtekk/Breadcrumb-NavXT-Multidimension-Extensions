@@ -1,5 +1,5 @@
 <?php
-/*  Copyright 2011-2019 John Havlik  (email : john.havlik@mtekk.us)
+/*  Copyright 2011-2020 John Havlik  (email : john.havlik@mtekk.us)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -105,16 +105,25 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 	{
 		//Use WordPress API, though a bit heavier than the old method, this will ensure compatibility with other plug-ins
 		$parent = get_post($id);
-		//Assemble our wp_list_pages arguments, filter as well
-		$args = apply_filters('bcn_multidim_post_children', 'depth=1&child_of=' . $id . '&exclude=' . $id . '&echo=0&title_li=', $id);
-		$suffix = '<ul>' . wp_list_pages($args) . '</ul>';
-		//Hide empty enteries
-		if($suffix === '<ul></ul>')
+		//Only add the breadcrumb if it is non-private or we allow private posts in the breadcrumb trail
+		if(apply_filters('bcn_show_post_private', get_post_status($parent) !== 'private', $parent->ID))
 		{
-			$suffix = '';
+			//Assemble our wp_list_pages arguments, filter as well
+			$args = apply_filters('bcn_multidim_post_children', 'depth=1&child_of=' . $id . '&exclude=' . $id . '&echo=0&title_li=', $id);
+			$suffix = '<ul>' . wp_list_pages($args) . '</ul>';
+			//Hide empty enteries
+			if($suffix === '<ul></ul>')
+			{
+				$suffix = '';
+			}
+			//Place the breadcrumb in the trail, uses the constructor to set the title, template, and type, get a pointer to it in return
+			$breadcrumb = $this->add(new bcn_breadcrumb(
+					get_the_title($id),
+					$this->opt['Hpost_' . $parent->post_type . '_template'] . $suffix,
+					array('post', 'post-' . $parent->post_type),
+					get_permalink($id),
+					$id));
 		}
-		//Place the breadcrumb in the trail, uses the constructor to set the title, template, and type, get a pointer to it in return
-		$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title($id), $this->opt['Hpost_' . $parent->post_type . '_template'] . $suffix, array('post', 'post-' . $parent->post_type), get_permalink($id), $id));
 		//Make sure the id is valid, and that we won't end up spinning in a loop
 		if($parent->post_parent >= 0 && $parent->post_parent != false && $id != $parent->post_parent && $frontpage != $parent->post_parent)
 		{
@@ -135,52 +144,55 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
      */
     protected function do_post($post, $force_link = false, $is_paged = false, $is_current_item = true)
     {
-		global $page;
 		//If we did not get a WP_Post object, warn developer and return early
-		if(!is_object($post) || get_class($post) !== 'WP_Post')
+		if(!($post instanceof WP_Post))
 		{
 			_doing_it_wrong(__CLASS__ . '::' . __FUNCTION__, __('$post global is not of type WP_Post', 'breadcrumb-navxt'), '5.1.1');
 			return;
 		}
-		$suffix = '';
-		if(is_post_type_hierarchical($post->post_type))
+		//If this is the current item or if we're allowing private posts in the trail add a breadcrumb
+		if($is_current_item || apply_filters('bcn_show_post_private', get_post_status($post) !== 'private', $post->ID))
 		{
-			//Assemble our wp_list_pages arguments, filter as well
-			$args = apply_filters('bcn_multidim_post_children', 'depth=1&child_of=' . $post->ID . '&exclude=' . $post->ID . '&echo=0&title_li=', $post->ID);
-			$suffix = '<ul>' . wp_list_pages($args) . '</ul>';
-			//Hide empty enteries
-			if($suffix === '<ul></ul>')
+			if(is_post_type_hierarchical($post->post_type))
 			{
-				$suffix = '';
+				//Assemble our wp_list_pages arguments, filter as well
+				$args = apply_filters('bcn_multidim_post_children', 'depth=1&child_of=' . $post->ID . '&exclude=' . $post->ID . '&echo=0&title_li=', $post->ID);
+				$suffix = '<ul>' . wp_list_pages($args) . '</ul>';
+				//Hide empty enteries
+				if($suffix === '<ul></ul>')
+				{
+					$suffix = '';
+				}
+			}
+			//Place the breadcrumb in the trail, uses the bcn_breadcrumb constructor to set the title, template, and type
+			$breadcrumb = $this->add(new bcn_breadcrumb(
+					get_the_title($post),
+					$this->opt['Hpost_' . $post->post_type . '_template_no_anchor'] . $suffix,
+					array('post', 'post-' . $post->post_type, 'current-item'),
+					NULL,
+					$post->ID));
+			if($is_current_item)
+			{
+				$breadcrumb->add_type('current-item');
+			}
+			//Under a couple of circumstances we will want to link this breadcrumb
+			if($force_link || ($is_current_item && $this->opt['bcurrent_item_linked']) || ($is_paged && $this->opt['bpaged_display']))
+			{
+				//Change the template over to the normal, linked one
+				$breadcrumb->set_template($this->opt['Hpost_' . $post->post_type . '_template']);
+				//Add the link
+				$breadcrumb->set_linked(true);
 			}
 		}
-		//Place the breadcrumb in the trail, uses the bcn_breadcrumb constructor to set the title, template, and type
-		$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title($post), $this->opt['Hpost_' . $post->post_type . '_template_no_anchor'] . $suffix, array('post', 'post-' . $post->post_type, 'current-item'), NULL, $post->ID));
-		if($is_current_item)
+		//Done with the current item, now on to the parents
+		$frontpage = get_option('page_on_front');
+		//If we are to follow the hierarchy first (with hierarchy type backup), run through the post again
+		if($this->opt['bpost_' . $post->post_type. '_hierarchy_parent_first'] && $post->post_parent > 0 && $post->ID != $post->post_parent && $frontpage != $post->post_parent)
 		{
-			$breadcrumb->add_type('current-item');
-		}
-		//Under a couple of circumstances we will want to link this breadcrumb
-		if($force_link || ($is_current_item && $this->opt['bcurrent_item_linked']) || ($is_paged && $this->opt['bpaged_display']))
-		{
-			//Change the template over to the normal, linked one
-			$breadcrumb->set_template($this->opt['Hpost_' . $post->post_type . '_template'] . $suffix);
-			//Add the link
-			$breadcrumb->set_url(get_permalink($post));
-		}
-		//If we have an attachment, run through the post again
-		if($post->post_type === 'attachment')
-		{
-			//Done with the current item, now on to the parents
-			$frontpage = get_option('page_on_front');
-			//Make sure the id is valid, and that we won't end up spinning in a loop
-			if($post->post_parent >= 0 && $post->post_parent != false && $post->ID != $post->post_parent && $frontpage != $post->post_parent)
-			{
-				//Get the parent's information
-				$parent = get_post($post->post_parent);
-				//Take care of the parent's breadcrumb
-				$this->do_post($parent, true, false, false);
-			}
+			//Get the parent's information
+			$parent = get_post($post->post_parent);
+			//Take care of the parent's breadcrumb
+			$this->do_post($parent, true, false, false);
 		}
 		//Otherwise we need the follow the hiearchy tree
 		else
