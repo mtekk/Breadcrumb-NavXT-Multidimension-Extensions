@@ -47,12 +47,24 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 			$suffix = '';
 		}
 		//Place the breadcrumb in the trail, uses the constructor to set the title, template, and type, get a pointer to it in return
-		$breadcrumb = $this->add(new bcn_breadcrumb($term->name, $this->opt['Htax_' . $taxonomy . '_template'] . $suffix, array('taxonomy', $taxonomy), get_term_link($term, $taxonomy), $id));
+		$breadcrumb = $this->add(new bcn_breadcrumb(
+				$term->name,
+				$this->opt['Htax_' . $taxonomy . '_template'] . $suffix,
+				array('taxonomy', $taxonomy),
+				get_term_link($term, $taxonomy),
+				$id,
+				true));
 		//Make sure the id is valid, and that we won't end up spinning in a loop
 		if($term->parent && $term->parent != $id)
 		{
 			//Figure out the rest of the term hiearchy via recursion
-			$term = $this->term_parents($term->parent, $taxonomy);
+			//FIXME: Change to just passing in term instance (work for 7.0)
+			$ret_term = $this->term_parents($term->parent, $taxonomy);
+			//May end up with WP_Error, don't update the term if that's the case
+			if($ret_term instanceof WP_Term)
+			{
+				$term = $ret_term;
+			}
 		}
 		return $term;
 	}
@@ -78,13 +90,18 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 			$suffix = '';
 		}
 		//Place the breadcrumb in the trail, uses the constructor to set the title, template, and type, get a pointer to it in return
-		$breadcrumb = $this->add(new bcn_breadcrumb($term->name, $this->opt['Htax_' . $term->taxonomy . '_template_no_anchor'] . $suffix, array('archive', 'taxonomy', $term->taxonomy, 'current-item'), NULL, $term->term_id));
+		$breadcrumb = $this->add(new bcn_breadcrumb(
+				$term->name,
+				$this->opt['Htax_' . $term->taxonomy . '_template_no_anchor'] . $suffix,
+				array('archive', 'taxonomy', $term->taxonomy, 'current-item'),
+				$this->maybe_add_post_type_arg(get_term_link($term), null, $term->taxonomy),
+				$term->term_id));
 		//If we're paged, let's link to the first page
 		if($this->opt['bcurrent_item_linked'] || ($is_paged && $this->opt['bpaged_display']))
 		{
 			$breadcrumb->set_template($this->opt['Htax_' . $term->taxonomy . '_template'] . $suffix);
-			//Figure out the anchor for current category
-			$breadcrumb->set_url(get_term_link($term, $term->taxonomy));
+			//Add the link
+			$breadcrumb->set_linked(true);
 		}
 		//Get parents of current category
 		if($term->parent)
@@ -122,7 +139,8 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 					$this->opt['Hpost_' . $parent->post_type . '_template'] . $suffix,
 					array('post', 'post-' . $parent->post_type),
 					get_permalink($id),
-					$id));
+					$id,
+					true));
 		}
 		//Make sure the id is valid, and that we won't end up spinning in a loop
 		if($parent->post_parent >= 0 && $parent->post_parent != false && $id != $parent->post_parent && $frontpage != $parent->post_parent)
@@ -168,8 +186,8 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 			$breadcrumb = $this->add(new bcn_breadcrumb(
 					get_the_title($post),
 					$this->opt['Hpost_' . $post->post_type . '_template_no_anchor'] . $suffix,
-					array('post', 'post-' . $post->post_type, 'current-item'),
-					NULL,
+					array('post', 'post-' . $post->post_type),
+					get_permalink($post),
 					$post->ID));
 			if($is_current_item)
 			{
@@ -179,7 +197,7 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 			if($force_link || ($is_current_item && $this->opt['bcurrent_item_linked']) || ($is_paged && $this->opt['bpaged_display']))
 			{
 				//Change the template over to the normal, linked one
-				$breadcrumb->set_template($this->opt['Hpost_' . $post->post_type . '_template']);
+				$breadcrumb->set_template($this->opt['Hpost_' . $post->post_type . '_template'] . $suffix);
 				//Add the link
 				$breadcrumb->set_linked(true);
 			}
@@ -234,7 +252,12 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 					$suffix = '';
 				}
 				//Place the breadcrumb in the trail, uses the constructor to set the title, template, and type, we get a pointer to it in return
-				$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title($root_id), $this->opt['Hpost_' . $type_str . '_template_no_anchor'] . $suffix, array($type_str . '-root', 'post', 'post-' . $type_str), NULL, $root_id));
+				$breadcrumb = $this->add(new bcn_breadcrumb(
+						get_the_title($root_id),
+						$this->opt['Hpost_' . $type_str . '_template_no_anchor'] . $suffix,
+						array($type_str . '-root', 'post', 'post-' . $type_str),
+						get_permalink($root_id),
+						$root_id));
 				//If we are at home, or any root page archive then we need to add the current item type
 				if($is_current_item)
 				{
@@ -244,8 +267,8 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 				if(!$is_current_item || ($is_current_item && $this->opt['bcurrent_item_linked']) || ($is_paged && $this->opt['bpaged_display']))
 				{
 					$breadcrumb->set_template($this->opt['Hpost_' . $type_str . '_template'] . $suffix);
-					//Figure out the anchor for home page
-					$breadcrumb->set_url(get_permalink($root_id));
+					//Add the link
+					$breadcrumb->set_linked(true);
 				}
 				//Done with the "root", now on to the parents
 				//Get the blog page
@@ -291,7 +314,14 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 			}
 		}
 		//Place the breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-		$breadcrumb = $this->add(new bcn_breadcrumb($site_name, $this->opt['Hhome_template_no_anchor'] . $suffix, array('home')));
+		$breadcrumb = $this->add(new bcn_breadcrumb(
+				$site_name,
+				$this->opt['Hhome_template_no_anchor'] . $suffix,
+				array('home'),
+				get_home_url(),
+				null,
+				false
+				));
 		//The old do_front_page() specific code
 		if($is_current_item)
 		{
@@ -301,8 +331,8 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 		if($force_link || ($is_current_item && $this->opt['bcurrent_item_linked']) || ($is_paged && $this->opt['bpaged_display']))
 		{
 			$breadcrumb->set_template($this->opt['Hhome_template'] . $suffix);
-			//Figure out the anchor for home page
-			$breadcrumb->set_url(get_home_url());
+			//Add the link
+			$breadcrumb->set_linked(true);
 		}
 		//If we have a multi site and are not on the main site we may need to add a breadcrumb for the main site
 		if($this->opt['bmainsite_display'] && !is_main_site())
@@ -310,7 +340,14 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 			//Get the site name
 			$site_name = get_site_option('site_name');
 			//Place the main site breadcrumb in the trail, uses the constructor to set the title, prefix, and suffix, get a pointer to it in return
-			$breadcrumb = $this->add(new bcn_breadcrumb($site_name, $this->opt['Hmainsite_template'], array('main-home'), get_home_url($current_site->blog_id)));
+			$breadcrumb = $this->add(new bcn_breadcrumb(
+					$site_name,
+					$this->opt['Hmainsite_template'],
+					array('main-home'),
+					get_home_url($current_site->blog_id),
+					null,
+					true
+					));
 		}
 	}
 	/**

@@ -2,9 +2,9 @@
 Contributors: mtekk
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=FD5XEU783BR8U&lc=US&item_name=Breadcrumb%20NavXT%20Donation&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted
 Tags: breadcrumb navxt, breadcrumb, breadcrumbs, trail, navigation, menu
-Requires at least: 4.8
+Requires at least: 5
 Tested up to: 5.4
-Stable tag: 2.6.2
+Stable tag: 2.6.3
 License: GPLv2 or later
 Automates the generation of multidimensional list breadcrumb trails with Breadcrumb NavXT.
 
@@ -48,6 +48,11 @@ Save the file (upload if applicable). Now you should have a breadcrumb trail on 
 Please visit [Breadcrumb NavXT's Documentation](http://mtekk.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/ "Go to Breadcrumb NavXT's Documentation.") page for more information.
 
 == Changelog ==
+= 2.6.3 =
+Release date: April 25th, 2020
+
+* Bug fix: Fixed compatibility issues with Breadcrumb NavXT 6.4.x
+
 = 2.6.2 =
 Release date: December 31th, 2019
 
