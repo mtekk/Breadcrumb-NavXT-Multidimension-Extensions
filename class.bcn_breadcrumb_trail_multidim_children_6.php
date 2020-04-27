@@ -1,19 +1,19 @@
 <?php
 /*  Copyright 2011-2020 John Havlik  (email : john.havlik@mtekk.us)
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 require_once(dirname(__FILE__) . '/includes/block_direct_access.php');
 class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
@@ -26,11 +26,11 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 	}
 	/**
 	 * A Breadcrumb Trail Filling Function
-	 * 
+	 *
 	 * This recursive functions fills the trail with breadcrumbs for parent terms.
 	 * @param int $id The id of the term.
 	 * @param string $taxonomy The name of the taxonomy that the term belongs to
-	 * 
+	 *
 	 * @return WP_Term The term we stopped at
 	 */
 	protected function term_parents($id, $taxonomy)
@@ -58,9 +58,9 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 	}
 	/**
 	 * A Breadcrumb Trail Filling Function
-	 * 
+	 *
 	 * This function fills a breadcrumb for any taxonomy archive, was previously two separate functions. Was modified to output a list of related level terms.
-	 * 
+	 *
 	 * @param WP_Term $term The term object to generate the breadcrumb for
 	 * @param bool $is_paged Whether or not the current resource is on a page other than page 1
 	 */
@@ -94,36 +94,27 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 	}
 	/**
 	 * A Breadcrumb Trail Filling Function
-	 * 
+	 *
 	 * This recursive functions fills the trail with breadcrumbs for parent posts/pages.
 	 * @param int $id The id of the parent page.
 	 * @param int $frontpage The id of the front page.
-	 * 
+	 *
 	 * @return WP_Post The parent we stopped at
 	 */
 	protected function post_parents($id, $frontpage)
 	{
 		//Use WordPress API, though a bit heavier than the old method, this will ensure compatibility with other plug-ins
 		$parent = get_post($id);
-		//Only add the breadcrumb if it is non-private or we allow private posts in the breadcrumb trail
-		if(apply_filters('bcn_show_post_private', get_post_status($parent) !== 'private', $parent->ID))
+		//Assemble our wp_list_pages arguments, filter as well
+		$args = apply_filters('bcn_multidim_post_children', 'depth=1&child_of=' . $id . '&exclude=' . $id . '&echo=0&title_li=', $id);
+		$suffix = '<ul>' . wp_list_pages($args) . '</ul>';
+		//Hide empty enteries
+		if($suffix === '<ul></ul>')
 		{
-			//Assemble our wp_list_pages arguments, filter as well
-			$args = apply_filters('bcn_multidim_post_children', 'depth=1&child_of=' . $id . '&exclude=' . $id . '&echo=0&title_li=', $id);
-			$suffix = '<ul>' . wp_list_pages($args) . '</ul>';
-			//Hide empty enteries
-			if($suffix === '<ul></ul>')
-			{
-				$suffix = '';
-			}
-			//Place the breadcrumb in the trail, uses the constructor to set the title, template, and type, get a pointer to it in return
-			$breadcrumb = $this->add(new bcn_breadcrumb(
-					get_the_title($id),
-					$this->opt['Hpost_' . $parent->post_type . '_template'] . $suffix,
-					array('post', 'post-' . $parent->post_type),
-					get_permalink($id),
-					$id));
+			$suffix = '';
 		}
+		//Place the breadcrumb in the trail, uses the constructor to set the title, template, and type, get a pointer to it in return
+		$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title($id), $this->opt['Hpost_' . $parent->post_type . '_template'] . $suffix, array('post', 'post-' . $parent->post_type), get_permalink($id), $id));
 		//Make sure the id is valid, and that we won't end up spinning in a loop
 		if($parent->post_parent >= 0 && $parent->post_parent != false && $id != $parent->post_parent && $frontpage != $parent->post_parent)
 		{
@@ -132,67 +123,64 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 		}
 		return $parent;
 	}
-    /**
-     * A Breadcrumb Trail Filling Function
-     * 
-     * This functions fills a breadcrumb for posts
-     * 
+	/**
+	 * A Breadcrumb Trail Filling Function
+	 *
+	 * This functions fills a breadcrumb for posts
+	 *
 	 * @param WP_Post $post Instance of WP_Post object to create a breadcrumb for
 	 * @param bool $force_link Whether or not to force this breadcrumb to be linked
 	 * @param bool $is_paged Whether or not the current resource is on a page other than page 1
 	 * @param bool $is_current_item Whether or not the breadcrumb being generated is the current item
-     */
-    protected function do_post($post, $force_link = false, $is_paged = false, $is_current_item = true)
-    {
+	 */
+	protected function do_post($post, $force_link = false, $is_paged = false, $is_current_item = true)
+	{
+		global $page;
 		//If we did not get a WP_Post object, warn developer and return early
-		if(!($post instanceof WP_Post))
+		if(!is_object($post) || get_class($post) !== 'WP_Post')
 		{
 			_doing_it_wrong(__CLASS__ . '::' . __FUNCTION__, __('$post global is not of type WP_Post', 'breadcrumb-navxt'), '5.1.1');
 			return;
 		}
-		//If this is the current item or if we're allowing private posts in the trail add a breadcrumb
-		if($is_current_item || apply_filters('bcn_show_post_private', get_post_status($post) !== 'private', $post->ID))
+		$suffix = '';
+		if(is_post_type_hierarchical($post->post_type))
 		{
-			if(is_post_type_hierarchical($post->post_type))
+			//Assemble our wp_list_pages arguments, filter as well
+			$args = apply_filters('bcn_multidim_post_children', 'depth=1&child_of=' . $post->ID . '&exclude=' . $post->ID . '&echo=0&title_li=', $post->ID);
+			$suffix = '<ul>' . wp_list_pages($args) . '</ul>';
+			//Hide empty enteries
+			if($suffix === '<ul></ul>')
 			{
-				//Assemble our wp_list_pages arguments, filter as well
-				$args = apply_filters('bcn_multidim_post_children', 'depth=1&child_of=' . $post->ID . '&exclude=' . $post->ID . '&echo=0&title_li=', $post->ID);
-				$suffix = '<ul>' . wp_list_pages($args) . '</ul>';
-				//Hide empty enteries
-				if($suffix === '<ul></ul>')
-				{
-					$suffix = '';
-				}
-			}
-			//Place the breadcrumb in the trail, uses the bcn_breadcrumb constructor to set the title, template, and type
-			$breadcrumb = $this->add(new bcn_breadcrumb(
-					get_the_title($post),
-					$this->opt['Hpost_' . $post->post_type . '_template_no_anchor'] . $suffix,
-					array('post', 'post-' . $post->post_type, 'current-item'),
-					NULL,
-					$post->ID));
-			if($is_current_item)
-			{
-				$breadcrumb->add_type('current-item');
-			}
-			//Under a couple of circumstances we will want to link this breadcrumb
-			if($force_link || ($is_current_item && $this->opt['bcurrent_item_linked']) || ($is_paged && $this->opt['bpaged_display']))
-			{
-				//Change the template over to the normal, linked one
-				$breadcrumb->set_template($this->opt['Hpost_' . $post->post_type . '_template']);
-				//Add the link
-				$breadcrumb->set_linked(true);
+				$suffix = '';
 			}
 		}
-		//Done with the current item, now on to the parents
-		$frontpage = get_option('page_on_front');
-		//If we are to follow the hierarchy first (with hierarchy type backup), run through the post again
-		if($this->opt['bpost_' . $post->post_type. '_hierarchy_parent_first'] && $post->post_parent > 0 && $post->ID != $post->post_parent && $frontpage != $post->post_parent)
+		//Place the breadcrumb in the trail, uses the bcn_breadcrumb constructor to set the title, template, and type
+		$breadcrumb = $this->add(new bcn_breadcrumb(get_the_title($post), $this->opt['Hpost_' . $post->post_type . '_template_no_anchor'] . $suffix, array('post', 'post-' . $post->post_type, 'current-item'), NULL, $post->ID));
+		if($is_current_item)
 		{
-			//Get the parent's information
-			$parent = get_post($post->post_parent);
-			//Take care of the parent's breadcrumb
-			$this->do_post($parent, true, false, false);
+			$breadcrumb->add_type('current-item');
+		}
+		//Under a couple of circumstances we will want to link this breadcrumb
+		if($force_link || ($is_current_item && $this->opt['bcurrent_item_linked']) || ($is_paged && $this->opt['bpaged_display']))
+		{
+			//Change the template over to the normal, linked one
+			$breadcrumb->set_template($this->opt['Hpost_' . $post->post_type . '_template'] . $suffix);
+			//Add the link
+			$breadcrumb->set_url(get_permalink($post));
+		}
+		//If we have an attachment, run through the post again
+		if($post->post_type === 'attachment')
+		{
+			//Done with the current item, now on to the parents
+			$frontpage = get_option('page_on_front');
+			//Make sure the id is valid, and that we won't end up spinning in a loop
+			if($post->post_parent >= 0 && $post->post_parent != false && $post->ID != $post->post_parent && $frontpage != $post->post_parent)
+			{
+				//Get the parent's information
+				$parent = get_post($post->post_parent);
+				//Take care of the parent's breadcrumb
+				$this->do_post($parent, true, false, false);
+			}
 		}
 		//Otherwise we need the follow the hiearchy tree
 		else
@@ -202,10 +190,10 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 		}
 	}
 	/**
-	 * A Breadcrumb Trail Filling Function 
+	 * A Breadcrumb Trail Filling Function
 	 *
 	 * Handles only the root page stuff for post types, including the "page for posts"
-	 * 
+	 *
 	 * @param string $type_str The type string variable
 	 * @param int $root_id The ID for the post type root
 	 * @param bool $is_paged Whether or not the current resource is on a page other than page 1
@@ -260,9 +248,9 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 	}
 	/**
 	 * A Breadcrumb Trail Filling Function
-	 * 
+	 *
 	 * This functions fills a breadcrumb for the home page.
-	 * 
+	 *
 	 * @param bool $force_link Whether or not to force this breadcrumb to be linked
 	 * @param bool $is_paged Whether or not the current resource is on a page other than page 1
 	 * @param bool $is_current_item Whether or not the breadcrumb being generated is the current item
@@ -317,11 +305,11 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 	 * This functions outputs or returns the breadcrumb trail in list form.
 	 *
 	 * @deprecated 6.0.0 No longer needed, superceeded by $template parameter in display
-	 * 
+	 *
 	 * @param bool $return Whether to return data or to echo it.
 	 * @param bool $linked[optional] Whether to allow hyperlinks in the trail or not.
 	 * @param bool $reverse[optional] Whether to reverse the output or not.
-	 * 
+	 *
 	 * @return void Void if option to print out breadcrumb trail was chosen.
 	 * @return string String version of the breadcrumb trail.
 	 */
