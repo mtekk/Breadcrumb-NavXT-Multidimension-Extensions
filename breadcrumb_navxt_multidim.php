@@ -3,12 +3,12 @@
 Plugin Name: Breadcrumb NavXT Multidimension Extensions
 Plugin URI: https://mtekk.us/extensions/breadcrumb-navxt-multidimension-extensions/
 Description: Adds the bcn_display_list_multidim function for Vista like breadcrumb trails. For details on how to use this plugin visit <a href="https://mtekk.us/extensions/breadcrumb-navxt-multidimension-extensions/">Breadcrumb NavXT Multidimension Extensions</a>. 
-Version: 2.6.3
+Version: 2.6.80
 Author: John Havlik
 Author URI: http://mtekk.us/
 Text Domain: breadcrumb-navxt-multidimension-extensions
 */
-/*  Copyright 2011-2020  John Havlik  (email : john.havlik@mtekk.us)
+/*  Copyright 2011-2021  John Havlik  (email : john.havlik@mtekk.us)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ Text Domain: breadcrumb-navxt-multidimension-extensions
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 require_once(dirname(__FILE__) . '/includes/block_direct_access.php');
+use mtekk\adminKit\{adminKit, form, message, setting};
 //Do a PHP version check, require 5.4 or newer
 if(version_compare(phpversion(), '5.4.0', '<'))
 {
@@ -108,7 +109,13 @@ function bcn_multidim_ext_init()
 		require_once(dirname(__FILE__) . '/class.bcn_breadcrumb_trail_multidim_6.php');
 		require_once(dirname(__FILE__) . '/class.bcn_breadcrumb_trail_multidim_children_6.php');
 	}
-	//Otherwise we can now include our extended breadcrumb trail for 6.0.0+
+	//If the installed Breadcrumb NavXT is pre 7.0 but post 6.4
+	else if(!defined('breadcrumb_navxt::version') || version_compare(breadcrumb_navxt::version, '6.9.60', '<'))
+	{
+		require_once(dirname(__FILE__) . '/class.bcn_breadcrumb_trail_multidim_6_4.php');
+		require_once(dirname(__FILE__) . '/class.bcn_breadcrumb_trail_multidim_children_6_4.php');
+	}
+	//Otherwise we can now include our extended breadcrumb trail for 7.0.0+
 	else if(!class_exists('bcn_breadcrumb_trail_multidim'))
 	{
 		require_once(dirname(__FILE__) . '/class.bcn_breadcrumb_trail_multidim.php');
@@ -124,10 +131,25 @@ add_filter('bcn_settings_init', 'bcn_multidim_ext_settings_setup');
  */
 function bcn_multidim_ext_settings_setup($settings)
 {
-	if(!isset($settings['bhome_display_children']))
+	//BCN 7.0 compat
+	if(class_exists('\mtekk\adminKit\setting\setting_bool'))
 	{
-		//Add our 'default' use_menu option
-		$settings['bhome_display_children'] = false;
+		if(!isset($settings['bhome_display_children']))
+		{
+			$settings['bhome_display_children'] = new setting\setting_bool(
+					'home_display_children',
+					false,
+					__('Home Breadcrumb', 'breadcrumb-navxt-multidimension-extensions'));
+		}
+	}
+	//Legacy compat
+	else
+	{
+		if(!isset($settings['bhome_display_children']))
+		{
+			//Add our 'default' use_menu option
+			$settings['bhome_display_children'] = false;
+		}
 	}
 	return $settings; 
 }
@@ -187,7 +209,15 @@ function bcn_multidim_ext_admin_init()
 			}
 			add_action('bcn_after_settings_tabs', 'bcn_extensions_tab');
 		}
-		require_once(dirname(__FILE__) . '/class.bcn_multidim_admin.php');
+		//Breadcrumb NavXT 7.0 compat
+		if(class_exists('mtekk\adminKit\adminKit'))
+		{
+			require_once(dirname(__FILE__) . '/class.bcn_multidim_admin.php');
+		}
+		else
+		{
+			require_once(dirname(__FILE__) . '/class.bcn_multidim_admin_6.php');
+		}
 		$bcn_multidim_admin = new bcn_multidim_admin(plugin_basename(__FILE__));
 	}
 }

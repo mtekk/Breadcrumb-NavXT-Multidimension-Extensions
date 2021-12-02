@@ -26,44 +26,45 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 	}
 	/**
 	 * A Breadcrumb Trail Filling Function
-	 * 
-	 * This recursive functions fills the trail with breadcrumbs for parent terms.
-	 * @param int $id The id of the term.
-	 * @param string $taxonomy The name of the taxonomy that the term belongs to
-	 * 
-	 * @return WP_Term The term we stopped at
+	 *
+	 * This recursive functions fills the trail with breadcrumbs for parent terms
+	 *
+	 * @param WP_Term $term The term object to generate breadcrumbs for
+	 * @param string|null $type The post type string to use for determining whether or not to add the post type argument
+	 *
+	 * @return WP_Term|WP_Error The term we stopped at
 	 */
-	protected function term_parents($id, $taxonomy)
+	protected function term_parents($term, $type = null)
 	{
-		global $post;
-		//Get the current category object, filter applied within this call
-		$term = get_term($id, $taxonomy);
-		//Assemble our wp_list_categories arguments, filter as well
-		$args = apply_filters('bcn_multidim_term_children', 'depth=1&parent=' . $id . '&echo=0&taxonomy=' . $taxonomy . '&show_option_none=bcn_multidim_oopse&title_li=', $id, $taxonomy);
-		$suffix = '<ul>' . wp_list_categories($args) . '</ul>';
-		//Hide empty enteries
-		if(strpos($suffix, 'bcn_multidim_oopse') !== false)
+		if($term instanceof WP_Term)
 		{
-			$suffix = '';
-		}
-		//Place the breadcrumb in the trail, uses the constructor to set the title, template, and type, get a pointer to it in return
-		$breadcrumb = $this->add(new bcn_breadcrumb(
-				$term->name,
-				$this->opt['Htax_' . $taxonomy . '_template'] . $suffix,
-				array('taxonomy', $taxonomy),
-				get_term_link($term, $taxonomy),
-				$term->term_id,
-				true));
-		//Make sure the id is valid, and that we won't end up spinning in a loop
-		if($term->parent && $term->parent != $id)
-		{
-			//Figure out the rest of the term hiearchy via recursion
-			//FIXME: Change to just passing in term instance (work for 7.0)
-			$ret_term = $this->term_parents($term->parent, $taxonomy);
-			//May end up with WP_Error, don't update the term if that's the case
-			if($ret_term instanceof WP_Term)
+			global $post;
+			//Assemble our wp_list_categories arguments, filter as well
+			$args = apply_filters('bcn_multidim_term_children', 'depth=1&parent=' . $term->term_id. '&echo=0&taxonomy=' . $term->taxonomy. '&show_option_none=bcn_multidim_oopse&title_li=', $term->term_id, $term->taxonomy);
+			$suffix = '<ul>' . wp_list_categories($args) . '</ul>';
+			//Hide empty enteries
+			if(strpos($suffix, 'bcn_multidim_oopse') !== false)
 			{
-				$term = $ret_term;
+				$suffix = '';
+			}
+			//Place the breadcrumb in the trail, uses the constructor to set the title, template, and type, get a pointer to it in return
+			$breadcrumb = $this->add(new bcn_breadcrumb(
+					$term->name,
+					$this->opt['Htax_' . $term->taxonomy. '_template'] . $suffix,
+					array('taxonomy', $term->taxonomy),
+					get_term_link(get_term_link($term)),
+					$term->term_id,
+					true));
+			//Make sure the id is valid, and that we won't end up spinning in a loop
+			if($term->parent && $term->parent != $term->term_id)
+			{
+				//Figure out the rest of the term hiearchy via recursion
+				$ret_term = $this->term_parents(get_term($term->parent, $term->taxonomy), $type);
+				//May end up with WP_Error, don't update the term if that's the case
+				if($ret_term instanceof WP_Term)
+				{
+					$term = $ret_term;
+				}
 			}
 		}
 		return $term;
