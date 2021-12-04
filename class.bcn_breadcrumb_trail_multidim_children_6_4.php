@@ -171,6 +171,7 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 		//If this is the current item or if we're allowing private posts in the trail add a breadcrumb
 		if($is_current_item || apply_filters('bcn_show_post_private', get_post_status($post) !== 'private', $post->ID))
 		{
+			$suffix = '';
 			if(is_post_type_hierarchical($post->post_type))
 			{
 				//Assemble our wp_list_pages arguments, filter as well
