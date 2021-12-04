@@ -193,7 +193,7 @@ add_action('plugins_loaded', 'bcn_multidim_ext_admin_init', 16);
 function bcn_multidim_ext_admin_init()
 {
 	//If this is the admin, should load the admin settings update code
-	if(is_admin() && class_exists('mtekk_adminKit'))
+	if(is_admin() && (class_exists('mtekk_adminKit') || class_exists('mtekk\adminKit\adminKit')))
 	{
 		//Check to see if someone else has setup the extensions settings tab
 		if(has_action('bcn_after_settings_tabs', 'bcn_extensions_tab') === false)
@@ -221,6 +221,16 @@ function bcn_multidim_ext_admin_init()
 		$bcn_multidim_admin = new bcn_multidim_admin(plugin_basename(__FILE__));
 	}
 }
+$bcn_mutidim_settings_global = array();
+//We want to run the settings extracter late
+add_filter('bcn_settings_init', 'bcn_grab_settings', 99);
+//This functions to grab the default settings from within breadcrumb navxt. It is sort of ugly, but would be less so if this extension was in a class
+function bcn_grab_settings($settings)
+{
+	global $bcn_mutidim_settings_global;
+	$bcn_mutidim_settings_global = $settings;
+	return $settings;
+}
 /**
  * Outputs the breadcrumb trail in a list with the sibling pages/terms of the breadcrumb in its second dimension
  * 
@@ -231,10 +241,18 @@ function bcn_multidim_ext_admin_init()
 */
 function bcn_display_list_multidim($return = false, $linked = true, $reverse = false, $force = false)
 {
+	global $bcn_mutidim_settings_global;
 	//Make new instance of the ext_breadcrumb_trail object
 	$breadcrumb_trail = new bcn_breadcrumb_trail_multidim();
 	//Initial setup of options
-	breadcrumb_navxt::setup_options($breadcrumb_trail->opt);
+	if(class_exists('mtekk\adminKit\adminKit'))
+	{
+		$breadcrumb_trail->opt = adminKit::settings_to_opts($bcn_mutidim_settings_global);
+	}
+	else
+	{
+		breadcrumb_navxt::setup_options($breadcrumb_trail->opt);
+	}
 	//Merge in options from the database
 	$breadcrumb_trail->opt = wp_parse_args(get_option('bcn_options'), $breadcrumb_trail->opt);
 	//If we're being forced to fill the trail, clear it before calling fill
@@ -257,6 +275,7 @@ function bcn_display_list_multidim($return = false, $linked = true, $reverse = f
 */
 function bcn_display_list_multidim_children($return = false, $linked = true, $reverse = false, $force = false)
 {
+	global $bcn_mutidim_settings_global;
 	if(!class_exists('bcn_breadcrumb_trail_multidim_children'))
 	{
 		_doing_it_wrong(__FUNCTION__, __('Breadcrumb NavXT 5.1.1 or newer is required for the latest features', 'breadcrumb-navxt-multidimension-extensions'), '1.9.0');
@@ -265,7 +284,14 @@ function bcn_display_list_multidim_children($return = false, $linked = true, $re
 	//Make new instance of the ext_breadcrumb_trail object
 	$breadcrumb_trail = new bcn_breadcrumb_trail_multidim_children();
 	//Initial setup of options
-	breadcrumb_navxt::setup_options($breadcrumb_trail->opt);
+	if(class_exists('mtekk\adminKit\adminKit'))
+	{
+		$breadcrumb_trail->opt = adminKit::settings_to_opts($bcn_mutidim_settings_global);
+	}
+	else
+	{
+		breadcrumb_navxt::setup_options($breadcrumb_trail->opt);
+	}
 	//Merge in options from the database
 	$breadcrumb_trail->opt = wp_parse_args(get_option('bcn_options'), $breadcrumb_trail->opt);
 	//If we're being forced to fill the trail, clear it before calling fill
