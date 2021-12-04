@@ -2,9 +2,9 @@
 Contributors: mtekk
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=FD5XEU783BR8U&lc=US&item_name=Breadcrumb%20NavXT%20Donation&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted
 Tags: breadcrumb navxt, breadcrumb, breadcrumbs, trail, navigation, menu
-Requires at least: 4.8
-Tested up to: 5.4
-Stable tag: 2.6.3
+Requires at least: 5.0
+Tested up to: 5.8
+Stable tag: 2.7.0
 License: GPLv2 or later
 Automates the generation of multidimensional list breadcrumb trails with Breadcrumb NavXT.
 
@@ -25,29 +25,15 @@ Breadcrumb NavXT Multidimension Extensions is distributed with translations for 
 Don't see your language on the list? Stop by [Breadcrumb NavXT's translation project](http://translate.mtekk.us/projects/breadcrumb-navxt "Go to Breadcrumb NavXT's GlotPress based translation project").
 
 == Installation ==
-Open the appropriate file for your theme (typically header.php). This can be done within WordPress’ administration panel through Presentation > Theme Editor or through your favorite text editor. Place one of the following code snippets where you want the breadcrumb trail to appear.
-
-= Siblings in the Second Dimension =
-The following code will produce a multidimensional breadcrumb trail with the siblings of a breadcrumb in it’s second dimension:
-`<ul class="breadcrumbs">
-	<?php if(function_exists('bcn_display_list_multidim'))
-	{
-		bcn_display_list_multidim();
-	}?>
-</ul>`
-= Children in the Second Dimension =
-The following code will produce a multidimensional breadcrumb trail with the children of a breadcrumb in it’s second dimension:
-`<ul class="breadcrumbs">
-	<?php if(function_exists('bcn_display_list_multidim_children'))
-	{
-		bcn_display_list_multidim_children();
-	}?>
-</ul>`
-Save the file (upload if applicable). Now you should have a breadcrumb trail on your WordPress powered site. To customize the breadcrumb trail you may edit the default values for the options in the administrative interface. This is located in your administration panel under Settings > Breadcrumb NavXT.
-
-Please visit [Breadcrumb NavXT's Documentation](http://mtekk.us/code/breadcrumb-navxt/breadcrumb-navxt-doc/ "Go to Breadcrumb NavXT's Documentation.") page for more information.
+Breadcrumb NavXT Multidimension Extensions can be installed from within WordPress’ administration panel. After installing and activating the plugin, to get breadcrumb trails to display either use the included widget, or call the breadcrumb trail in your theme (or child theme). See the [Calling the Breadcrumb Trail](https://mtekk.us/extensions/breadcrumb-navxt-multidimension-extensions/#basic "Read more on calling the breadcrumb trail") article for more information on calling the breadcrumb trail.
 
 == Changelog ==
+= 2.7.0 =
+Release date: December 4th, 2021
+
+* Bug fix: Fixed compatibility issues with Breadcrumb NavXT 7.0
+* Bug fix: Fixed undefined variable PHP warnings
+
 = 2.6.3 =
 Release date: April 27th, 2020
 

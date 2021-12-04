@@ -20,7 +20,7 @@ require_once(dirname(__FILE__) . '/includes/block_direct_access.php');
 use mtekk\adminKit\{adminKit, form, message, setting};
 class bcn_multidim_admin extends adminKit
 {
-	protected $version = '2.6.80';
+	protected $version = '2.7.0';
 	protected $access_level = 'manage_options';
 	protected $unique_prefix = 'bcn';
 	protected $identifier = 'breadcrumb-navxt';
