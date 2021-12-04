@@ -52,7 +52,7 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 					$term->name,
 					$this->opt['Htax_' . $term->taxonomy. '_template'] . $suffix,
 					array('taxonomy', $term->taxonomy),
-					get_term_link(get_term_link($term)),
+					get_term_link($term),
 					$term->term_id,
 					true));
 			//Make sure the id is valid, and that we won't end up spinning in a loop
