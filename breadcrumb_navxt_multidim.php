@@ -241,13 +241,23 @@ function bcn_grab_settings($settings)
 */
 function bcn_display_list_multidim($return = false, $linked = true, $reverse = false, $force = false)
 {
-	global $bcn_mutidim_settings_global;
 	//Make new instance of the ext_breadcrumb_trail object
 	$breadcrumb_trail = new bcn_breadcrumb_trail_multidim();
 	//Initial setup of options
 	if(class_exists('mtekk\adminKit\adminKit'))
 	{
-		$breadcrumb_trail->opt = adminKit::settings_to_opts($bcn_mutidim_settings_global);
+		$settings = array();
+		//7.0
+		if(version_compare(breadcrumb_navxt::version, '7.0.1', '<'))
+		{
+			$settings = $GLOBALS['bcn_mutidim_settings_global'];
+		}
+		//7.0.1
+		else
+		{
+			breadcrumb_navxt::setup_setting_defaults($settings);
+		}
+		$breadcrumb_trail->opt = adminKit::settings_to_opts($settings);
 	}
 	else
 	{
@@ -275,7 +285,6 @@ function bcn_display_list_multidim($return = false, $linked = true, $reverse = f
 */
 function bcn_display_list_multidim_children($return = false, $linked = true, $reverse = false, $force = false)
 {
-	global $bcn_mutidim_settings_global;
 	if(!class_exists('bcn_breadcrumb_trail_multidim_children'))
 	{
 		_doing_it_wrong(__FUNCTION__, __('Breadcrumb NavXT 5.1.1 or newer is required for the latest features', 'breadcrumb-navxt-multidimension-extensions'), '1.9.0');
@@ -287,7 +296,16 @@ function bcn_display_list_multidim_children($return = false, $linked = true, $re
 	if(class_exists('mtekk\adminKit\adminKit'))
 	{
 		$settings = array();
-		breadcrumb_navxt::setup_setting_defaults($settings);
+		//7.0
+		if(version_compare(breadcrumb_navxt::version, '7.0.1', '<'))
+		{
+			$settings = $GLOBALS['bcn_mutidim_settings_global'];
+		}
+		//7.0.1
+		else
+		{
+			breadcrumb_navxt::setup_setting_defaults($settings);
+		}
 		$breadcrumb_trail->opt = adminKit::settings_to_opts($settings);
 	}
 	else
