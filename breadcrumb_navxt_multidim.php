@@ -3,7 +3,7 @@
 Plugin Name: Breadcrumb NavXT Multidimension Extensions
 Plugin URI: https://mtekk.us/extensions/breadcrumb-navxt-multidimension-extensions/
 Description: Adds the bcn_display_list_multidim function for Vista like breadcrumb trails. For details on how to use this plugin visit <a href="https://mtekk.us/extensions/breadcrumb-navxt-multidimension-extensions/">Breadcrumb NavXT Multidimension Extensions</a>. 
-Version: 2.7.0
+Version: 2.7.1
 Author: John Havlik
 Author URI: http://mtekk.us/
 Text Domain: breadcrumb-navxt-multidimension-extensions
@@ -286,7 +286,9 @@ function bcn_display_list_multidim_children($return = false, $linked = true, $re
 	//Initial setup of options
 	if(class_exists('mtekk\adminKit\adminKit'))
 	{
-		$breadcrumb_trail->opt = adminKit::settings_to_opts($bcn_mutidim_settings_global);
+		$settings = array();
+		breadcrumb_navxt::setup_setting_defaults($settings);
+		$breadcrumb_trail->opt = adminKit::settings_to_opts($settings);
 	}
 	else
 	{
