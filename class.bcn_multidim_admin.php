@@ -20,7 +20,7 @@ require_once(dirname(__FILE__) . '/includes/block_direct_access.php');
 use mtekk\adminKit\{adminKit, form, message, setting};
 class bcn_multidim_admin extends adminKit
 {
-	protected $version = '2.7.0';
+	protected $version = '2.7.1';
 	protected $access_level = 'manage_options';
 	protected $unique_prefix = 'bcn';
 	protected $identifier = 'breadcrumb-navxt';
@@ -47,6 +47,10 @@ class bcn_multidim_admin extends adminKit
 		$this->opt = adminKit::settings_to_opts(apply_filters($this->unique_prefix . '_settings_init', $this->settings));
 		//Synchronize up our settings with the database as we're done modifying them now
 		$this->opt = $this->parse_args($this->get_option($this->unique_prefix . '_options'), $this->opt);
+	}
+	public function add_page()
+	{
+		//Blank on purpose to prevent extra menu items
 	}
 	/**
 	 * Makes sure the current user can manage options to proceed
