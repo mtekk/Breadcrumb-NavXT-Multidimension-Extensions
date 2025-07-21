@@ -1,6 +1,6 @@
 <?php
 /*  
-	Copyright 2007-2021  John Havlik  (email : john.havlik@mtekk.us)
+	Copyright 2007-2025  John Havlik  (email : john.havlik@mtekk.us)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ require_once(dirname(__FILE__) . '/includes/block_direct_access.php');
 use mtekk\adminKit\{adminKit, form, message, setting};
 class bcn_multidim_admin extends adminKit
 {
-	protected $version = '2.7.1';
+	protected $version = '2.7.2';
 	protected $access_level = 'manage_options';
 	protected $unique_prefix = 'bcn';
 	protected $identifier = 'breadcrumb-navxt';

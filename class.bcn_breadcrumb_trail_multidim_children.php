@@ -1,5 +1,5 @@
 <?php
-/*  Copyright 2011-2020 John Havlik  (email : john.havlik@mtekk.us)
+/*  Copyright 2011-2025 John Havlik  (email : john.havlik@mtekk.us)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -218,7 +218,7 @@ class bcn_breadcrumb_trail_multidim_children extends bcn_breadcrumb_trail
 		else
 		{
 			//Handle the post's hiearchy
-			$this->post_hierarchy($post->ID, $post->post_type, $post->post_parent);
+			$this->post_hierarchy($post);
 		}
 	}
 	/**
